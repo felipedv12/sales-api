@@ -1,0 +1,19 @@
+{
+    "name": "felipe/sales-api",
+    "description": "Projeto em PHP para teste na SoftExpert",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "App\\Utils\\": "src/utils",
+            "App\\Routes\\": "src/routes"
+        }
+    },
+    "authors": [
+        {
+            "name": "Felipe Marques",
+            "email": "felipedv12@hotmail.com"
+        }
+    ],
+    "require": {}
+}
