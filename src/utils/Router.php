@@ -24,7 +24,7 @@ class Router
     {
         $this->routes[$method][$path] = $handler;
     }
-     
+
     /**
      * Method responsible for dispatching the current route
      *
@@ -37,12 +37,16 @@ class Router
     {
         $request = parse_url($requestUri);
         $path = $request['path'];
-        if (isset($this->routes[$method][$path])) {
-            $handler = $this->routes[$method][$path];
-            return $handler();
-        } else {
-            http_response_code(404);
-            return "Endpoint not found";
+        foreach ($this->routes[$method] as $route => $handler) {
+            
+            $pattern = '~^' . $route . '$~';
+            if (preg_match($pattern, $path, $matches)) {
+                // removes the first item in the array, this item is the route
+                array_shift($matches);
+                return call_user_func_array($handler, $matches);
+            }
         }
+        http_response_code(404);
+        return "Endpoint not found";
     }
 }
