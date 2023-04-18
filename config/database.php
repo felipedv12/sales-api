@@ -1,0 +1,3 @@
+<?php
+
+CONST PG_PASSWORD = 'Pg17042023*';

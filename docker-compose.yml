@@ -1,0 +1,17 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    container_name: pg-container
+    restart: always
+    environment:
+      POSTGRES_USER: salesapi
+      POSTGRES_PASSWORD: Sl17042023*
+    volumes:
+      - ./resources/db/data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    
