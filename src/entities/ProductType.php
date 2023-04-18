@@ -1,34 +1,34 @@
 <?php
-namespace App\Models;
-
+namespace App\Entities;
+/**
+ * Product Type entity
+ */
 class ProductType
 {
-    private int $id;
+    private ?int $id;
     private string $name;
     private float $taxPercentage;
 
     /**
      * Create a new product type object
      *
-     * @param integer $id The unique ID for the product type
-     * @param string $name The name of the product type
-     * @param float $taxPercentage The tax percentage of the product type
+     * @param integer|null $id
+     * @param string $name
+     * @param float $taxPercentage
      */
-    public function __construct(int $id, string $name, float $taxPercentage)
+    public function __construct(string $name, float $taxPercentage, ?int $id = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->taxPercentage = $taxPercentage;
     }
 
-    
-
     /**
      * Get the unique ID of the product type
      *
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

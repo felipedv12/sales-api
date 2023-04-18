@@ -1,8 +1,8 @@
 <?php
-namespace App\Models;
+namespace App\Entities;
 
 /**
- * Product model
+ * Product entity
  */
 class Product
 {
