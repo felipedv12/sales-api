@@ -43,6 +43,23 @@ class ProductTypeValidator
     }
 
     /**
+     * Validate the product type before delete
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function validateDelete(int $id) : array
+    {
+        $this->success = true;
+
+        $this->errors = [];
+
+        $this->validateIfExists($id);
+
+        return ['success' => $this->success, 'data' => ['product-type-id' => $id], 'errors' => $this->errors];
+    }
+
+    /**
      * Validate name
      *
      * @param string|null $name
@@ -92,12 +109,39 @@ class ProductTypeValidator
     private function validateUniqueName(string $name, int $id): void
     {
         $result = $this->repository->findByName($name);
-        if (!empty($result)) {
-            if ($result->getId() !== $id) {
+        if (!empty($result['data'])) {
+            if ($result['data']->getId() !== $id) {
                 $this->success = false;
                 $this->errors['name'][] = ['message' => 'Product type name already exists.'];
             }
 
+        }
+    }
+
+    /**
+     * Validate if product type is not linked to a product
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    private function validateProductTypeInUse(int $id): void 
+    {
+
+    }
+
+    /**
+     * Validate if the received ID exists in the database
+     *
+     * @param integer $id
+     * @return void
+     */
+    private function validateIfExists(int $id) : void
+    {
+        $result = $this->repository->findById($id);
+        if (empty($result['data'])){
+            $this->success = false;
+            $this->errors['code'] = 404; 
+            $this->errors['message'] = 'Product type not found.';
         }
     }
 }

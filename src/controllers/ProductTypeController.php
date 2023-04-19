@@ -15,7 +15,24 @@ class ProductTypeController
     {
         $status = 200;
         $results = $this->getService()->list();
-        if(empty($results)){
+        if(empty($results['data'])){
+            $status = 404;
+        }
+        http_response_code($status);
+        return $results;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function find(int $id): array
+    {
+        $status = 200;
+        $results = $this->getService()->find($id);
+        if(empty($results['data'])){
             $status = 404;
         }
         http_response_code($status);
@@ -56,6 +73,22 @@ class ProductTypeController
         return $result;
     }
 
+    /**
+     * Delete a product type from the database
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function delete(int $id): array
+    {
+        $status = 200;
+        $results = $this->getService()->delete($id);
+        if(!empty($results['errors'])){
+            $status = $results['errors']['code'];
+        }
+        http_response_code($status);
+        return $results;
+    }
 
     /**
      * Method responsible for return an instance of the service

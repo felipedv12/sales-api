@@ -15,6 +15,9 @@ class ProductTypeRepository extends Repository
 
     public function getAll(): array
     {
+        $productTypes = null;
+        $success = true;
+        $message = null;
         try {
             $statement = $this->db->prepare('
                 SELECT id, name, tax_percentage
@@ -32,15 +35,19 @@ class ProductTypeRepository extends Repository
                 );
                 return $productType->toArray();
             }, $results);
-
-            return $productTypes;
         } catch (PDOException $e) {
-            throw new Exception('Error connecting to database: ' . $e->getMessage());
+            $message = 'Error connecting to database: ' . $e->getMessage();
+            throw new Exception($message);
+        } finally {
+            return ['success' => $success, 'data' => $productTypes, 'message' => $message];
         }
+        return [];
     }
 
-    public function findByName(string $name): ?ProductType
+    public function findByName(string $name): array
     {
+        $success = true;
+        $message = null;
         try {
             $statement = $this->db->prepare('
                 SELECT id, name, tax_percentage
@@ -50,19 +57,51 @@ class ProductTypeRepository extends Repository
             $statement->execute(['name' => $name]);
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-            if (!$result) {
-                return null;
+            if ($result) {
+                $productType = new ProductType(
+                    $result['name'],
+                    $result['tax_percentage'],
+                    $result['id']
+                );
             }
-
-            $productType = new ProductType(
-                $result['name'],
-                $result['tax_percentage'],
-                $result['id']
-            );
-            return $productType;
         } catch (PDOException $e) {
-            throw new Exception('Error connecting to database: ' . $e->getMessage());
+            $message = 'Error connecting to database: ' . $e->getMessage();
+            throw new Exception($message);
+        } finally {
+            return ['success' => $success, 'data' => $productType, 'message' => $message];
         }
+        return [];
+    }
+
+    public function findById(int $id): array
+    {
+        $success = true;
+        $message = null;
+        $foundProductType = null;
+        try {
+            $statement = $this->db->prepare('
+                SELECT id, name, tax_percentage
+                FROM public.product_type
+                WHERE id = :id;
+            ');
+            $statement->execute(['id' => $id]);
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+            if ($result) {
+                $productType = new ProductType(
+                    $result['name'],
+                    $result['tax_percentage'],
+                    $result['id']
+                );
+                $foundProductType = $productType->toArray();
+            }
+        } catch (PDOException $e) {
+            $message = 'Error connecting to database: ' . $e->getMessage();
+            throw new Exception($message);
+        } finally {
+            return ['success' => $success, 'data' => $foundProductType, 'message' => $message];
+        }
+        return [];
     }
 
     public function create(ProductType $productType): array
@@ -84,7 +123,7 @@ class ProductTypeRepository extends Repository
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
             $rawProductType = new ProductType($productType->getName(), $productType->getTaxPercentage(), $result['id']);
-            $newProductType= $rawProductType->toArray();
+            $newProductType = $rawProductType->toArray();
         } catch (PDOException $e) {
             $success = false;
             $message = 'Error connecting to database: ' . $e->getMessage();
@@ -109,7 +148,7 @@ class ProductTypeRepository extends Repository
 	            SET name=:name, tax_percentage=:tax_percentage
 	            WHERE id=:id;'
             );
-            $result = $statement->execute([
+            $statement->execute([
                 'name' => $productType->getName(),
                 'tax_percentage' => $productType->getTaxPercentage(),
                 'id' => $productType->getId()
@@ -121,10 +160,37 @@ class ProductTypeRepository extends Repository
             throw new Exception($message);
         } catch (Exception $e) {
             $success = false;
-            $message = 'Error creating product type: ' . $e->getMessage();
+            $message = 'Error updating product type: ' . $e->getMessage();
             throw new Exception($message);
         } finally {
             return ['success' => $success, 'data' => $productType->toArray(), 'message' => $message];
+        }
+        return [];
+    }
+
+    public function delete(int $id): array
+    {
+        $success = true;
+        $message = null;
+        try {
+            $statement = $this->db->prepare('
+            DELETE FROM public.product_type
+	            WHERE id=:id;'
+            );
+            $statement->execute([
+                'id' => $id
+            ]);
+
+        } catch (PDOException $e) {
+            $success = false;
+            $message = 'Error connecting to database: ' . $e->getMessage();
+            throw new Exception($message);
+        } catch (Exception $e) {
+            $success = false;
+            $message = 'Error deleting product type: ' . $e->getMessage();
+            throw new Exception($message);
+        } finally {
+            return ['success' => $success, 'data' => ['product-type-id' => $id], 'message' => $message];
         }
         return [];
     }

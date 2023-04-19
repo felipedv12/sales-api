@@ -24,6 +24,18 @@ class ProductTypeService
     }
 
     /**
+     * Get product type by ID
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function find(int $id): array
+    {
+        $results = $this->getRepository()->findById($id);
+        return $results;
+    }
+
+    /**
      * Receive the request and dispatch to the correct method
      *
      * @param string $bodyParams
@@ -71,6 +83,17 @@ class ProductTypeService
         $created = $this->getRepository()->update($productType);
         return $created;
     }
+
+    public function delete(int $id) : array
+    {
+        $validation = $this->getValidator()->validateDelete($id);
+        if ($validation['success']){
+            $deleted = $this->getRepository()->delete($id);
+            return $deleted;
+        }
+        return $validation;
+    }
+
     /**
      * Method responsible for return an instance of the repository
      *
