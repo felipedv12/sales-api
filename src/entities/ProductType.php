@@ -1,5 +1,6 @@
 <?php
 namespace App\Entities;
+
 /**
  * Product Type entity
  */
@@ -51,5 +52,15 @@ class ProductType
     public function getTaxPercentage(): float
     {
         return $this->taxPercentage;
+    }
+
+    /**
+     * Get the object in array format
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return get_object_vars($this);
     }
 }

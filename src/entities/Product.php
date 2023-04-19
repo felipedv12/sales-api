@@ -81,4 +81,14 @@ class Product
     {
         return $this->productType;
     }
+    
+    /**
+     * Get the object in array format
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return get_object_vars($this);
+    }
 }
