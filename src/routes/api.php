@@ -19,6 +19,11 @@ $router->addRoute('GET', '/product-types', function () {
     return $controller->list();
 });
 
+$router->addRoute('GET', '/product-types/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    return $controller->find($id);
+});
+
 $router->addRoute('POST', '/product-types', function () {
     $controller = new ProductTypeController();
     $body = file_get_contents("php://input");
@@ -31,17 +36,43 @@ $router->addRoute('PUT', '/product-types/(\d+)', function ($id) {
     return $controller->update($body, $id);
 });
 
+$router->addRoute('DELETE', '/product-types/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    return $controller->delete($id);
+});
+
 /**
  * Product routes
  */
-$router->addRoute('GET', '/products', function () {
-    return 'List of products';
+
+ $router->addRoute('GET', '/product', function () {
+    $controller = new ProductTypeController();
+    return $controller->list();
 });
 
-$router->addRoute('GET', '/products/(\d+)', function ($id) {
-    return 'Searching product: ' . $id;
+$router->addRoute('GET', '/product/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    return $controller->find($id);
 });
+
+$router->addRoute('POST', '/product', function () {
+    $controller = new ProductTypeController();
+    $body = file_get_contents("php://input");
+    return $controller->create($body);
+});
+
+$router->addRoute('PUT', '/product/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    $body = file_get_contents("php://input");
+    return $controller->update($body, $id);
+});
+
+$router->addRoute('DELETE', '/product/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    return $controller->delete($id);
+});
+
+
 $result = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
-header('Content-Type: application/json');
 echo (json_encode($result));
