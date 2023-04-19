@@ -1,14 +1,19 @@
 <?php
 
+use App\Controllers\HomeController;
 use App\Controllers\ProductTypeController;
 use App\Utils\Router;
 
 $router = new Router();
 
 $router->addRoute('GET', '/', function () {
-    return 'Home';
+    $controller = new HomeController();
+    return $controller->home();
 });
 
+/**
+ * Product type routes
+ */
 $router->addRoute('GET', '/product-types', function () {
     $controller = new ProductTypeController();
     return $controller->list();
@@ -26,6 +31,9 @@ $router->addRoute('PUT', '/product-types/(\d+)', function ($id) {
     return $controller->update($body, $id);
 });
 
+/**
+ * Product routes
+ */
 $router->addRoute('GET', '/products', function () {
     return 'List of products';
 });
