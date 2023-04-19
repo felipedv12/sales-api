@@ -20,6 +20,12 @@ $router->addRoute('POST', '/product-types', function () {
     return $controller->create($body);
 });
 
+$router->addRoute('PUT', '/product-types/(\d+)', function ($id) {
+    $controller = new ProductTypeController();
+    $body = file_get_contents("php://input");
+    return $controller->update($body, $id);
+});
+
 $router->addRoute('GET', '/products', function () {
     return 'List of products';
 });
