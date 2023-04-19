@@ -1,22 +1,30 @@
 BEGIN;
 
+DROP TABLE IF EXISTS public.purchase;
+
+DROP TABLE IF EXISTS public.product;
+
+DROP TABLE IF EXISTS public.product_type;
 
 CREATE TABLE IF NOT EXISTS public.product_type
 (
     id serial,
     name character varying(100) NOT NULL,
     tax_percentage numeric(8, 3) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT uq_name_product_type UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS public.product
 (
     id serial,
     name character varying(100) NOT NULL,
+    barcode character varying(20) NOT NULL,
     description character varying(255),
     price money,
     product_type_id integer NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT uq_barcode_product UNIQUE (barcode)
 );
 
 CREATE TABLE IF NOT EXISTS public.purchase
