@@ -2,39 +2,39 @@
 namespace App\Entities;
 
 /**
- * Purchase entity
+ * Sale entity
  */
-class Purchase extends Entity
+class Sale implements Entity
 {
-    private int $id;
+    private ?int $id;
     private Product $product;
-    private float $purchasedAmount;
+    private float $soldAmount;
     private float $totalProductValue; // read-only
     private float $totalTaxValue; // read-only
-    private float $totalPurchaseValue; // calculated property
+    private float $totalSaleValue; // calculated property
 
     /**
-     * Creates a new Purchase object.
+     * Creates a new Sale object.
      *
-     * @param int $id The unique ID of the purchase.
-     * @param Product $product The product that was purchased.
-     * @param float $purchasedAmount The amount of the product that was purchased.
+     * @param int $id The unique ID of the sale.
+     * @param Product $product The product that was sold.
+     * @param float $soldAmount The amount of the product that was sold.
      * @param float $totalProductValue The total value of the product (excluding taxes).
      * @param float $totalTaxValue The total value of the taxes.
      */
-    public function __construct(
-        int $id,
+    public function allParams(
+        ?int $id,
         Product $product,
-        float $purchasedAmount,
+        float $soldAmount,
         float $totalProductValue,
         float $totalTaxValue
     ) {
         $this->id = $id;
         $this->product = $product;
-        $this->purchasedAmount = $purchasedAmount;
+        $this->soldAmount = $soldAmount;
         $this->totalProductValue = $totalProductValue;
         $this->totalTaxValue = $totalTaxValue;
-        $this->totalPurchaseValue = $totalProductValue + $totalTaxValue;
+        $this->totalSaleValue = $totalProductValue + $totalTaxValue;
     }
 
     /**
@@ -48,9 +48,9 @@ class Purchase extends Entity
     }
 
     /**
-     * Gets the product that was purchased.
+     * Gets the product that was sold.
      *
-     * @return Product The purchased product.
+     * @return Product The sold product.
      */
     public function getProduct(): Product
     {
@@ -58,13 +58,13 @@ class Purchase extends Entity
     }
 
     /**
-     * Gets the amount of the product that was purchased.
+     * Gets the amount of the product that was sold.
      *
-     * @return float The purchased amount.
+     * @return float The sold amount.
      */
-    public function getPurchasedAmount(): float
+    public function getSaledAmount(): float
     {
-        return $this->purchasedAmount;
+        return $this->soldAmount;
     }
 
     /**
@@ -92,9 +92,9 @@ class Purchase extends Entity
      *
      * @return float The total purchase value.
      */
-    public function getTotalPurchaseValue(): float
+    public function getTotalSaleValue(): float
     {
-        return $this->totalPurchaseValue;
+        return $this->totalSaleValue;
     }
 
     /**
@@ -105,5 +105,10 @@ class Purchase extends Entity
     public function toArray(): array
     {
         return get_object_vars($this);
+    }
+
+    public function set(string $property, mixed $value): void
+    {
+        $this->$property = $value;
     }
 }
