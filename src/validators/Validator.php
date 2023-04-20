@@ -25,7 +25,7 @@ abstract class Validator
         $this->errors = [];
     }
 
-    private function validationFail(int $code, string $paramName, string $message): void
+    protected function validationFail(int $code, string $paramName, string $message): void
     {
         $this->success = false;
         $this->code = $code;

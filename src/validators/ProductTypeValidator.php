@@ -31,10 +31,11 @@ class ProductTypeValidator extends Validator
             $this->validateEmptyString('name', $params['name']);
             $this->validateMaxCharacters('name', $params['name'], 100);
             $this->validateEmptyNumeric('taxPercentage', $params['taxPercentage']);
-            $this->validatePositiveNumeric('taxPercentage', $params['taxPercentage']);
+            
         }
 
         if ($this->success) {
+            $this->validatePositiveNumeric('taxPercentage', $params['taxPercentage']);
             $this->validateUniqueName($params['name'], $id);
         }
 
@@ -69,11 +70,8 @@ class ProductTypeValidator extends Validator
         $result = $this->repository->findByName($name);
         if (!empty($result['data'])) {
             if ($result['data']->getId() !== $id) {
-                $this->success = false;
-                $this->code = Consts::HTTP_CODE_BAD_REQUEST;
-                $this->errors['name'][] = ['message' => 'Product type name already exists.'];
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, 'name', 'Product type name already exists.');
             }
-
         }
     }
 
