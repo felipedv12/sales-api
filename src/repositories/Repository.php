@@ -2,12 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Entities\Entity;
 use Config\Database;
 use Exception;
 use PDO;
 use PDOException;
 
-class Repository
+abstract class Repository
 {
     protected PDO $db;
 
@@ -35,4 +36,43 @@ class Repository
             throw new Exception('Error connecting to database: ' . $e->getMessage());
         } 
     }
+
+    /**
+     * Get all rows of the table
+     *
+     * @return array
+     */
+    abstract public function getAll() : array;
+
+    /**
+     * Find a row searching by the ID
+     *
+     * @param integer $id
+     * @return array
+     */
+    abstract public function findById(int $id) : array;
+
+    /**
+     * Insert row in the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
+    abstract public function create(Entity $entity) : array;
+
+    /**
+     * Update an object in the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
+    abstract public function update(Entity $entity) : array;
+
+    /**
+     * Delete a row from table
+     *
+     * @param integer $id
+     * @return array
+     */
+    abstract public function delete(int $id) : array;
 }

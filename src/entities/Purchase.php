@@ -4,7 +4,7 @@ namespace App\Entities;
 /**
  * Purchase entity
  */
-class Purchase
+class Purchase extends Entity
 {
     private int $id;
     private Product $product;

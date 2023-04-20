@@ -4,25 +4,26 @@ namespace App\Entities;
 /**
  * Product entity
  */
-class Product
+class Product extends Entity
 {
-    private int $id;
+    private ?int $id;
     private string $name;
     private string $barcode;
-    private string $description;
+    private ?string $description;
     private float $price;
     private ProductType $productType;
 
     /**
      * Creates a new Product object
      *
-     * @param int $id The unique ID of the product
-     * @param string $name The name of the product
-     * @param string $description An optional extended description of the product 
-     * @param float $price Price of the product
-     * @param ProductType $productType The type of the product
+     * @param integer|null $id
+     * @param string $name
+     * @param string $barcode
+     * @param string|null $description
+     * @param float $price
+     * @param ProductType $productType
      */
-    public function __construct(int $id, string $name, string $barcode, string $description, float $price, ProductType $productType)
+    public function __construct(?int $id, string $name, string $barcode, ?string $description, float $price, ProductType $productType)
     {
         $this->id = $id;
         $this->name = $name;
@@ -31,8 +32,6 @@ class Product
         $this->price = $price;
         $this->productType = $productType;
     }
-
-
 
     /**
      * Get the unique ID of the product
@@ -83,7 +82,21 @@ class Product
     {
         return $this->productType;
     }
-    
+
+    /**
+     * Set the value of id
+     *
+     * @param int $id
+     *
+     * @return self
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * Get the object in array format
      *

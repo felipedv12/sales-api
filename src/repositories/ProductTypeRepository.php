@@ -1,7 +1,9 @@
 <?php
 namespace App\Repositories;
 
+use App\Entities\Entity;
 use App\Entities\ProductType;
+use App\Utils\Consts;
 use PDOException;
 use Exception;
 use PDO;
@@ -28,7 +30,8 @@ class ProductTypeRepository extends Repository
             $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
             $productTypes = array_map(function ($result) {
-                $productType = new ProductType(
+                $productType = new ProductType();
+                $productType->allParams(
                     $result['name'],
                     $result['tax_percentage'],
                     $result['id']
@@ -46,6 +49,7 @@ class ProductTypeRepository extends Repository
 
     public function findByName(string $name): array
     {
+        $productType = null;
         $success = true;
         $message = null;
         try {
@@ -58,7 +62,8 @@ class ProductTypeRepository extends Repository
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
             if ($result) {
-                $productType = new ProductType(
+                $productType = new ProductType();
+                $productType->allParams(
                     $result['name'],
                     $result['tax_percentage'],
                     $result['id']
@@ -88,7 +93,8 @@ class ProductTypeRepository extends Repository
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
             if ($result) {
-                $productType = new ProductType(
+                $productType = new ProductType();
+                $productType->allParams(
                     $result['name'],
                     $result['tax_percentage'],
                     $result['id']
@@ -104,10 +110,12 @@ class ProductTypeRepository extends Repository
         return [];
     }
 
-    public function create(ProductType $productType): array
+    public function create(Entity $entity): array
     {
+        $productType = $entity;
         $success = true;
         $message = null;
+        $code = Consts::HTTP_CODE_CREATED;
         $newProductType = null;
         try {
             $statement = $this->db->prepare('
@@ -122,25 +130,30 @@ class ProductTypeRepository extends Repository
 
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-            $rawProductType = new ProductType($productType->getName(), $productType->getTaxPercentage(), $result['id']);
+            $rawProductType = new ProductType();
+            $rawProductType->allParams($productType->getName(), $productType->getTaxPercentage(), $result['id']);
             $newProductType = $rawProductType->toArray();
         } catch (PDOException $e) {
             $success = false;
+            $code = Consts::HTTP_CODE_SERVER_ERROR;
             $message = 'Error connecting to database: ' . $e->getMessage();
             throw new Exception($message);
         } catch (Exception $e) {
             $success = false;
+            $code = Consts::HTTP_CODE_SERVER_ERROR;
             $message = 'Error creating product type: ' . $e->getMessage();
             throw new Exception($message);
         } finally {
-            return ['success' => $success, 'data' => $newProductType, 'message' => $message];
+            return ['code' => $code, 'success' => $success, 'data' => $newProductType, 'message' => $message];
         }
         return [];
     }
 
-    public function update(ProductType $productType): array
+    public function update(Entity $entity): array
     {
+        $productType = $entity;
         $success = true;
+        $code = Consts::HTTP_CODE_OK;
         $message = null;
         try {
             $statement = $this->db->prepare('
@@ -156,14 +169,16 @@ class ProductTypeRepository extends Repository
 
         } catch (PDOException $e) {
             $success = false;
+            $code = Consts::HTTP_CODE_SERVER_ERROR;
             $message = 'Error connecting to database: ' . $e->getMessage();
             throw new Exception($message);
         } catch (Exception $e) {
             $success = false;
+            $code = Consts::HTTP_CODE_SERVER_ERROR;
             $message = 'Error updating product type: ' . $e->getMessage();
             throw new Exception($message);
         } finally {
-            return ['success' => $success, 'data' => $productType->toArray(), 'message' => $message];
+            return ['code' => $code, 'success' => $success, 'data' => $productType->toArray(), 'message' => $message];
         }
         return [];
     }

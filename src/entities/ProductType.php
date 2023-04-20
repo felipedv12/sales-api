@@ -4,7 +4,7 @@ namespace App\Entities;
 /**
  * Product Type entity
  */
-class ProductType
+class ProductType implements Entity
 {
     private ?int $id;
     private string $name;
@@ -17,7 +17,7 @@ class ProductType
      * @param string $name
      * @param float $taxPercentage
      */
-    public function __construct(string $name, float $taxPercentage, ?int $id = null)
+    public function allParams(string $name, float $taxPercentage, ?int $id = null)
     {
         $this->id = $id;
         $this->name = $name;
@@ -54,6 +54,11 @@ class ProductType
         return $this->taxPercentage;
     }
 
+    public function set(string $property, mixed $value): void
+    {
+        $this->$property = $value;
+    }
+
     /**
      * Get the object in array format
      *
@@ -63,4 +68,5 @@ class ProductType
     {
         return get_object_vars($this);
     }
+
 }
