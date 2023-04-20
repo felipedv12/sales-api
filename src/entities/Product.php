@@ -4,7 +4,7 @@ namespace App\Entities;
 /**
  * Product entity
  */
-class Product extends Entity
+class Product implements Entity
 {
     private ?int $id;
     private string $name;
@@ -23,7 +23,7 @@ class Product extends Entity
      * @param float $price
      * @param ProductType $productType
      */
-    public function __construct(?int $id, string $name, string $barcode, ?string $description, float $price, ProductType $productType)
+    public function allParams(?int $id, string $name, string $barcode, ?string $description, float $price, ProductType $productType)
     {
         $this->id = $id;
         $this->name = $name;
@@ -105,5 +105,17 @@ class Product extends Entity
     public function toArray(): array
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * Set properties
+     *
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     */
+    public function set(string $property, mixed $value): void
+    {
+        $this->$property = $value;
     }
 }
