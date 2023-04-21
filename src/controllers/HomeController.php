@@ -1,5 +1,6 @@
 <?php
 namespace App\Controllers;
+use App\Utils\Consts;
 
 class HomeController 
 {
@@ -19,7 +20,7 @@ class HomeController
               "url" => "https://github.com/felipedv12/sales-api.git"
             ]
         ];
-        http_response_code(200);
+        http_response_code(Consts::HTTP_CODE_OK);
         return $data;
     }
 }

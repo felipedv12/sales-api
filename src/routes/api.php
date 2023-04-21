@@ -3,6 +3,7 @@
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\ProductTypeController;
+use App\Controllers\SaleController;
 use App\Utils\Router;
 
 $router = new Router();
@@ -75,6 +76,26 @@ $router->addRoute('DELETE', '/products/(\d+)', function ($id) {
     return $controller->delete($id);
 });
 
+
+/**
+ * Product routes
+ */
+
+ $router->addRoute('GET', '/sales', function () {
+    $controller = new SaleController();
+    return $controller->list();
+});
+
+$router->addRoute('GET', '/sales/(\d+)', function ($id) {
+    $controller = new SaleController();
+    return $controller->find($id);
+});
+
+$router->addRoute('POST', '/sales', function () {
+    $controller = new SaleController();
+    $body = file_get_contents("php://input");
+    return $controller->save($body);
+});
 
 $result = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 

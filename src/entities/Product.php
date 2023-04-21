@@ -159,7 +159,12 @@ class Product implements Entity
      */
     public function toArray(): array
     {
-        return get_object_vars($this);
+        $array = get_object_vars($this);
+        if (isset($this->productType)){
+            $array['productType'] = $this->productType->toArray();
+        }
+        
+        return $array;
     }
 
     /**

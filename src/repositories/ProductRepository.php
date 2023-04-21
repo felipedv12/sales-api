@@ -5,6 +5,7 @@ use App\Entities\Entity;
 use App\Entities\Product;
 use App\Entities\ProductType;
 use App\Utils\Consts;
+use App\Utils\Utils;
 
 class ProductRepository extends Repository
 {
@@ -30,9 +31,8 @@ class ProductRepository extends Repository
 
     protected function getListStatement(): string
     {
-        return 'SELECT p.id, p.name, barcode, description, price, product_type_id, pt.name as type_name, pt.tax_percentage, p.created_at, p.updated_at
-        FROM public.product p 
-        INNER JOIN public.product_type pt ON pt.id = p.product_type_id';
+        return 'SELECT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at
+        FROM public.product p';
     }
 
     protected function getFindByIdStatement(): string
@@ -77,12 +77,9 @@ class ProductRepository extends Repository
 
     protected function getListMapping(array $result): Entity
     {
-        $productType = new ProductType();
-        $productType->allParams(
-            $result['type_name'],
-            $result['tax_percentage'],
-            $result['product_type_id']
-        );
+    
+        $relationRepository = new ProductTypeRepository();
+        $productType = Utils::getEntityFromArray($relationRepository->findById($result['product_type_id'])['data'], ProductType::class);
         $entity = new Product();
         $entity->allParams(
             $result['id'],

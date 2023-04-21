@@ -1,40 +1,45 @@
 <?php
 namespace App\Entities;
 
+use App\Utils\Consts;
+use DateTime;
+use DateTimeZone;
+
 /**
  * Sale entity
  */
 class Sale implements Entity
 {
     private ?int $id;
-    private Product $product;
-    private float $soldAmount;
-    private float $totalProductValue; // read-only
-    private float $totalTaxValue; // read-only
-    private float $totalSaleValue; // calculated property
+    private float $totalProductValue;
+    private float $totalTaxValue;
+    private DateTime $createdAt;
+    private DateTime $updatedAt;
 
     /**
-     * Creates a new Sale object.
+     * Creates a new Sale object
      *
-     * @param int $id The unique ID of the sale.
-     * @param Product $product The product that was sold.
-     * @param float $soldAmount The amount of the product that was sold.
-     * @param float $totalProductValue The total value of the product (excluding taxes).
-     * @param float $totalTaxValue The total value of the taxes.
+     * @param integer|null $id
+     * @param float $totalProductValue
+     * @param float $totalTaxValue
+     * @param string|null $createdAt
+     * @param string|null $updatedAt
+     * @return void
      */
     public function allParams(
         ?int $id,
-        Product $product,
-        float $soldAmount,
         float $totalProductValue,
-        float $totalTaxValue
+        float $totalTaxValue,
+        ?string $createdAt,
+        ?string $updatedAt
     ) {
+        $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
+
         $this->id = $id;
-        $this->product = $product;
-        $this->soldAmount = $soldAmount;
         $this->totalProductValue = $totalProductValue;
         $this->totalTaxValue = $totalTaxValue;
-        $this->totalSaleValue = $totalProductValue + $totalTaxValue;
+        $this->createdAt = $createdAt ? new DateTime($createdAt) : $dateTime;
+        $this->updatedAt = $updatedAt ? new DateTime($updatedAt) : $dateTime;
     }
 
     /**
@@ -45,26 +50,6 @@ class Sale implements Entity
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * Gets the product that was sold.
-     *
-     * @return Product The sold product.
-     */
-    public function getProduct(): Product
-    {
-        return $this->product;
-    }
-
-    /**
-     * Gets the amount of the product that was sold.
-     *
-     * @return float The sold amount.
-     */
-    public function getSaledAmount(): float
-    {
-        return $this->soldAmount;
     }
 
     /**
@@ -88,16 +73,6 @@ class Sale implements Entity
     }
 
     /**
-     * Gets the total purchase value (including taxes).
-     *
-     * @return float The total purchase value.
-     */
-    public function getTotalSaleValue(): float
-    {
-        return $this->totalSaleValue;
-    }
-
-    /**
      * Get the object in array format
      *
      * @return array
@@ -107,13 +82,39 @@ class Sale implements Entity
         return get_object_vars($this);
     }
 
+    /**
+     * Set an property in the class
+     *
+     * @param string $property
+     * @param mixed $value
+     * @return void
+     */
     public function set(string $property, mixed $value): void
     {
         $this->$property = $value;
     }
 
-    public function productClass() : string 
+    /**
+     * Get the value of createdAt
+     */
+    public function getCreatedAt(): DateTime
     {
-        return Product::class;
+        if (!isset($this->createdAt)) {
+            return new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
+        }
+        return $this->createdAt;
+    }
+
+    /**
+     * Get the value of updatedAt
+     *
+     * @return DateTime
+     */
+    public function getUpdatedAt(): DateTime
+    {
+        if (!isset($this->createdAt)) {
+            return new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
+        }
+        return $this->updatedAt;
     }
 }

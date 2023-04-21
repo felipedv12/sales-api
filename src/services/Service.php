@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Entities\Entity;
 use App\Repositories\Repository;
+use App\Utils\Utils;
 use App\Validators\Validator;
 
 abstract class Service
@@ -41,7 +42,7 @@ abstract class Service
      */
     public function preparePersist(array $params): array
     {
-        $entity = $this->getEntityFromParams($params, $this->getEntityClass());
+        $entity = Utils::getEntityFromArray($params, $this->getEntityClass());
 
         $result = null;
         if ($entity->getId()) {
@@ -162,29 +163,4 @@ abstract class Service
         return $this->validator;
     }
 
-    /**
-     * Returns the params converted into an entity object
-     *
-     * @param array $params
-     * @param string $entityClass
-     * @return Entity
-     */
-    protected function getEntityFromParams(array $params, string $entityClass): Entity
-    {
-        $entity = new $entityClass();
-        foreach ($params as $key => $value) {
-            if (property_exists($entity, $key)) {
-                // Checks if the value is an array
-                if (is_array($value)) {
-                    $propertyClassMethod = $key . 'Class';
-                    //Checks if the custom method exists in the class
-                    if (method_exists($entity, $propertyClassMethod)) {
-                        $value = $this->getEntityFromParams($value, $entity->$propertyClassMethod());
-                    }
-                }
-                $entity->set($key, $value);
-            }
-        }
-        return $entity;
-    }
 }
