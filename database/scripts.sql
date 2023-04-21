@@ -1,19 +1,10 @@
 BEGIN;
 
-DROP TABLE IF EXISTS public.purchase;
+DROP TABLE IF EXISTS public.sale;
 
 DROP TABLE IF EXISTS public.product;
 
 DROP TABLE IF EXISTS public.product_type;
-
-CREATE TABLE IF NOT EXISTS public.product_type
-(
-    id serial,
-    name character varying(100) NOT NULL,
-    tax_percentage numeric(8, 3) NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT uq_name_product_type UNIQUE (name)
-);
 
 CREATE TABLE IF NOT EXISTS public.product
 (
@@ -21,21 +12,35 @@ CREATE TABLE IF NOT EXISTS public.product
     name character varying(100) NOT NULL,
     barcode character varying(20) NOT NULL,
     description character varying(255),
-    price money,
+    price numeric(18, 2) NOT NULL,
     product_type_id integer NOT NULL,
-    PRIMARY KEY (id),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    CONSTRAINT product_pkey PRIMARY KEY (id),
     CONSTRAINT uq_barcode_product UNIQUE (barcode)
 );
 
-CREATE TABLE IF NOT EXISTS public.purchase
+
+CREATE TABLE IF NOT EXISTS public.product_type
+(
+    id serial,
+    name character varying(100) NOT NULL,
+    tax_percentage numeric(8, 3) NOT NULL,
+    CONSTRAINT product_type_pkey PRIMARY KEY (id),
+    CONSTRAINT uq_name_product_type UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS public.sale
 (
     id bigserial,
-    purchased_amount numeric(18, 4) NOT NULL,
-    total_product_value money NOT NULL,
-    total_tax_value money NOT NULL,
-    total_purchase_value money NOT NULL,
+    sold_amount numeric(18, 4) NOT NULL,
+    total_product_value numeric(18, 2) NOT NULL,
+    total_tax_value numeric(18, 2) NOT NULL,
+    total_sale_value numeric(18, 2) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     product_id bigint NOT NULL,
-    PRIMARY KEY (id)
+    CONSTRAINT sale_pkey PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public.product
@@ -46,8 +51,8 @@ ALTER TABLE IF EXISTS public.product
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.purchase
-    ADD CONSTRAINT fk_product_purchase FOREIGN KEY (product_id)
+ALTER TABLE IF EXISTS public.sale
+    ADD CONSTRAINT fk_product_sale FOREIGN KEY (product_id)
     REFERENCES public.product (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
