@@ -75,4 +75,9 @@ abstract class Validator
         }
     }
 
+    protected function getValidationResults(array $params) : array
+    {
+        return ['code' => $this->code, 'success' => $this->success, 'data' => $params, 'errors' => $this->errors];
+    }
+
 }

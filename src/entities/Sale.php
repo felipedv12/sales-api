@@ -111,4 +111,9 @@ class Sale implements Entity
     {
         $this->$property = $value;
     }
+
+    public function productClass() : string 
+    {
+        return Product::class;
+    }
 }

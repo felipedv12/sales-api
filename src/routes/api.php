@@ -2,6 +2,7 @@
 
 use App\Controllers\Controller;
 use App\Controllers\HomeController;
+use App\Controllers\ProductController;
 use App\Controllers\ProductTypeController;
 use App\Services\ProductTypeService;
 use App\Utils\Router;
@@ -49,30 +50,30 @@ $router->addRoute('DELETE', '/product-types/(\d+)', function ($id) {
  * Product routes
  */
 
- $router->addRoute('GET', '/product', function () {
-    $controller = new ProductTypeController();
+ $router->addRoute('GET', '/products', function () {
+    $controller = new ProductController();
     return $controller->list();
 });
 
-$router->addRoute('GET', '/product/(\d+)', function ($id) {
-    $controller = new ProductTypeController();
+$router->addRoute('GET', '/products/(\d+)', function ($id) {
+    $controller = new ProductController();
     return $controller->find($id);
 });
 
-$router->addRoute('POST', '/product', function () {
-    $controller = new ProductTypeController();
+$router->addRoute('POST', '/products', function () {
+    $controller = new ProductController();
     $body = file_get_contents("php://input");
     return $controller->save($body);
 });
 
-$router->addRoute('PUT', '/product/(\d+)', function ($id) {
-    $controller = new ProductTypeController();
+$router->addRoute('PUT', '/products/(\d+)', function ($id) {
+    $controller = new ProductController();
     $body = file_get_contents("php://input");
     return $controller->save($body, $id);
 });
 
-$router->addRoute('DELETE', '/product/(\d+)', function ($id) {
-    $controller = new ProductTypeController();
+$router->addRoute('DELETE', '/products/(\d+)', function ($id) {
+    $controller = new ProductController();
     return $controller->delete($id);
 });
 

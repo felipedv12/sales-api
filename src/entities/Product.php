@@ -118,4 +118,14 @@ class Product implements Entity
     {
         $this->$property = $value;
     }
+    
+    /**
+     * Get the class type of the Product Type relation
+     *
+     * @return string
+     */
+    public function productTypeClass(): string
+    {
+        return ProductType::class;
+    }
 }

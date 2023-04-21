@@ -39,7 +39,7 @@ class ProductTypeValidator extends Validator
             $this->validateUniqueName($params['name'], $id);
         }
 
-        return ['code' => $this->code, 'success' => $this->success, 'data' => $params, 'errors' => $this->errors];
+        return $this->getValidationResults($params);
     }
 
     /**

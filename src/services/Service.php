@@ -41,7 +41,7 @@ abstract class Service
      */
     public function preparePersist(array $params): array
     {
-        $entity = $this->getEntityFromParams($params);
+        $entity = $this->getEntityFromParams($params, $this->getEntityClass());
         $result = null;
         if ($entity->getId()) {
             $result = $this->update($entity);
@@ -163,14 +163,22 @@ abstract class Service
      * Returns the params converted into an entity object
      *
      * @param array $params
+     * @param string $entityClass
      * @return Entity
      */
-    protected function getEntityFromParams(array $params): Entity
+    protected function getEntityFromParams(array $params, string $entityClass): Entity
     {
-        $entityClass = $this->getEntityClass();
         $entity = new $entityClass();
         foreach ($params as $key => $value) {
             if (property_exists($entity, $key)) {
+                // Checks if the value is an array
+                if (is_array($value)) {
+                    $propertyClassMethod = $key . 'Class';
+                    //Checks if the custom method exists in the class
+                    if (method_exists($entity, $propertyClassMethod)) {
+                        $value = $this->getEntityFromParams($value, $entity->$propertyClassMethod());
+                    }
+                }
                 $entity->set($key, $value);
             }
         }
