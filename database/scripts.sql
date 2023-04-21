@@ -1,4 +1,5 @@
 BEGIN;
+DROP TABLE IF EXISTS public.sale_item;
 
 DROP TABLE IF EXISTS public.sale;
 
@@ -33,14 +34,23 @@ CREATE TABLE IF NOT EXISTS public.product_type
 CREATE TABLE IF NOT EXISTS public.sale
 (
     id bigserial,
-    sold_amount numeric(18, 4) NOT NULL,
     total_product_value numeric(18, 2) NOT NULL,
     total_tax_value numeric(18, 2) NOT NULL,
-    total_sale_value numeric(18, 2) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    product_id bigint NOT NULL,
     CONSTRAINT sale_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.sale_item
+(
+    id bigserial,
+    product_id integer NOT NULL,
+    sale_id bigint NOT NULL,
+    item_number integer NOT NULL,
+    sold_amount numeric(18, 4) NOT NULL,
+    product_value numeric(18, 2) NOT NULL,
+    tax_value numeric(18, 2) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public.product
@@ -51,11 +61,20 @@ ALTER TABLE IF EXISTS public.product
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.sale
-    ADD CONSTRAINT fk_product_sale FOREIGN KEY (product_id)
+ALTER TABLE IF EXISTS public.sale_item
+    ADD CONSTRAINT fk_product_sale_item FOREIGN KEY (product_id)
     REFERENCES public.product (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.sale_item
+    ADD CONSTRAINT fk_sale_sale_item FOREIGN KEY (sale_id)
+    REFERENCES public.sale (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
 
 END;
