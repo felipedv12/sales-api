@@ -42,6 +42,7 @@ abstract class Service
     public function preparePersist(array $params): array
     {
         $entity = $this->getEntityFromParams($params, $this->getEntityClass());
+
         $result = null;
         if ($entity->getId()) {
             $result = $this->update($entity);
@@ -75,7 +76,7 @@ abstract class Service
      */
     public function list(): array
     {
-        $results = $this->getRepository()->getAll();
+        $results = $this->getRepository()->list();
         return $results;
     }
 
@@ -123,11 +124,13 @@ abstract class Service
      */
     public function delete(int $id): array
     {
+        $deleted = $this->getRepository()->deleteById($id);
+        return $deleted;
+    }
+
+    public function validateDelete(int $id): array
+    {
         $validation = $this->getValidator()->validateDelete($id);
-        if ($validation['success']) {
-            $deleted = $this->getRepository()->delete($id);
-            return $deleted;
-        }
         return $validation;
     }
 

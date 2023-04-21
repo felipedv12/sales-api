@@ -16,7 +16,7 @@ class HomeController
             "description" => "API para teste na SoftExpert",
             "repository" => [
               "type" => "git",
-              "url" => "https://github.com/felipedv12/poke-api.git"
+              "url" => "https://github.com/felipedv12/sales-api.git"
             ]
         ];
         http_response_code(200);

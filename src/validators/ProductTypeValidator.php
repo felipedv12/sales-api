@@ -6,7 +6,7 @@ use App\Utils\Consts;
 
 class ProductTypeValidator extends Validator
 {
-    
+
     public function __construct(ProductTypeRepository $repository)
     {
         parent::__construct($repository);
@@ -27,17 +27,12 @@ class ProductTypeValidator extends Validator
             $this->validateIfIdExists($id);
         }
 
-        if ($this->success) {
-            $this->validateEmptyString('name', $params['name']);
-            $this->validateMaxCharacters('name', $params['name'], 100);
-            $this->validateEmptyNumeric('taxPercentage', $params['taxPercentage']);
-            
-        }
+        $this->validateEmptyString('name', $params['name']);
+        $this->validateMaxCharacters('name', $params['name'], 100);
+        $this->validateEmptyNumeric('taxPercentage', $params['taxPercentage']);
 
-        if ($this->success) {
-            $this->validatePositiveNumeric('taxPercentage', $params['taxPercentage']);
-            $this->validateUniqueName($params['name'], $id);
-        }
+        $this->validatePositiveNumeric('taxPercentage', $params['taxPercentage']);
+        $this->validateUniqueField('name', 'name', $params['name'], $id);
 
         return $this->getValidationResults($params);
     }
@@ -54,35 +49,6 @@ class ProductTypeValidator extends Validator
 
         $this->validateIfIdExists($id);
 
-        return ['code' => $this->code, 'success' => $this->success, 'data' => ['product-type-id' => $id], 'errors' => $this->errors];
-    }
-
-
-    /**
-     * Validate unique name
-     *
-     * @param string $name
-     * @param int $id
-     * @return void
-     */
-    private function validateUniqueName(string $name, int $id): void
-    {
-        $result = $this->repository->findByName($name);
-        if (!empty($result['data'])) {
-            if ($result['data']->getId() !== $id) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, 'name', 'Product type name already exists.');
-            }
-        }
-    }
-
-    /**
-     * Validate if product type is not linked to a product
-     *
-     * @param integer $id
-     * @return boolean
-     */
-    private function validateProductTypeInUse(int $id): void
-    {
-
+        return $this->getValidationResults(['product-type-id' => $id]);
     }
 }

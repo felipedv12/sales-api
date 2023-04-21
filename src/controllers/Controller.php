@@ -55,7 +55,7 @@ abstract class Controller
         if ($validation['success']){
             $result = $this->getService()->preparePersist($validation['data']);
             http_response_code($result['code']);
-            return $validation;
+            return $result;
         }
         http_response_code($validation['code']);
         return $validation;
@@ -68,14 +68,15 @@ abstract class Controller
      * @return array
      */
     public function delete(int $id): array
-    {
-        $status = Consts::HTTP_CODE_OK;
-        $results = $this->getService()->delete($id);
-        if(!empty($results['errors'])){
-            $status = $results['errors']['code'];
+    {        
+        $validation = $this->getService()->validateDelete($id);
+        if($validation['success']){
+            $results = $this->getService()->delete($id);
+            http_response_code($results['code']);
+            return $results;
         }
-        http_response_code($status);
-        return $results;
+        http_response_code($validation['code']);
+        return $validation;
     }
 
     /**

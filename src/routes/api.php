@@ -1,10 +1,8 @@
 <?php
 
-use App\Controllers\Controller;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\ProductTypeController;
-use App\Services\ProductTypeService;
 use App\Utils\Router;
 
 $router = new Router();
