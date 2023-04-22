@@ -11,6 +11,11 @@ class SaleItemDTO extends DTOEntity
     public float $productValue;
     public float $taxValue;
 
+    /**
+     * Returns the entity for the DTO
+     *
+     * @return SaleItem
+     */
     public function toEntity() : SaleItem
     {
         return new SaleItem($this);

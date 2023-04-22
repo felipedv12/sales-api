@@ -21,10 +21,10 @@ class ProductType implements Entity
     public function __construct(ProductTypeDTO $dto)
     {
         $this->id = $dto->id;
-        if(isset($dto->name)){
+        if (isset($dto->name)) {
             $this->name = $dto->name;
         }
-        if(isset($dto->taxPercentage)){
+        if (isset($dto->taxPercentage)) {
             $this->taxPercentage = $dto->taxPercentage;
         }
     }

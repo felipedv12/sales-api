@@ -102,6 +102,11 @@ class SaleItem implements Entity
         return $this->taxValue;
     }
 
+    /**
+     * Returns the DTO for the entity
+     *
+     * @return DTOEntity
+     */
     public function toDTO(): DTOEntity
     {
         $dto = new SaleItemDTO();

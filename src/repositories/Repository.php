@@ -169,7 +169,8 @@ abstract class Repository
     /**
      * Delete a row from table
      *
-     * @param integer $id
+     * @param mixed $id
+     * @param string $idColumn
      * @return array
      */
     public function deleteById(mixed $id, string $idColumn = 'id'): array
@@ -196,6 +197,12 @@ abstract class Repository
         return [];
     }
 
+    /**
+     * Returns the where query and the params
+     *
+     * @param array $conditions
+     * @return array
+     */
     protected function getWhereAndParams(array $conditions): array
     {
         $where = '';
@@ -213,6 +220,11 @@ abstract class Repository
         return ['where' => $where, 'params' => $params];
     }
 
+    /**
+     * Initialize the properties used in the data return
+     *
+     * @return void
+     */
     protected function initializeRepositoryProperties(): void
     {
         $this->success = true;
@@ -221,6 +233,14 @@ abstract class Repository
         $this->data = null;
     }
 
+    /**
+     * Sets the results of the methods execution
+     *
+     * @param boolean $success
+     * @param string $message
+     * @param integer $code
+     * @return void
+     */
     protected function setResults(bool $success, string $message, int $code)
     {
         $this->success = $success;
@@ -228,6 +248,11 @@ abstract class Repository
         $this->code = $code;
     }
 
+    /**
+     * Returns the results of the method execution
+     *
+     * @return array
+     */
     protected function getResults(): array
     {
         return ['code' => $this->code, 'success' => $this->success, 'data' => $this->data, 'message' => $this->message];
@@ -240,17 +265,55 @@ abstract class Repository
      */
     abstract protected function getInsertStatement(): string;
 
+    /**
+     * Returns the update statement
+     *
+     * @return string
+     */
     abstract protected function getUpdateStatement(): string;
 
+    /**
+     * Returns the list statement
+     *
+     * @return string
+     */
     abstract protected function getListStatement(): string;
 
+    /**
+     * Returns the find by id statement
+     *
+     * @return string
+     */
     abstract protected function getFindByIdStatement(): string;
 
+    /**
+     * Returns the delete by id statement
+     *
+     * @return string
+     */
     abstract protected function getDeleteByIdStatement(): string;
 
+    /**
+     * Returns the params for insert
+     *
+     * @param Entity $entity
+     * @return array
+     */
     abstract protected function getInsertParams(Entity $entity): array;
 
+    /**
+     * Returns the params for update
+     *
+     * @param Entity $entity
+     * @return array
+     */
     abstract protected function getUpdateParams(Entity $entity): array;
 
+    /**
+     * Returns the mapping of the lists method
+     *
+     * @param array $result
+     * @return Entity
+     */
     abstract protected function getListMapping(array $result): Entity;
 }

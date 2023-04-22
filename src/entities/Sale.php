@@ -24,7 +24,8 @@ class Sale implements Entity
      * @param SaleDTO $dto
      * @return void
      */
-    public function __construct(SaleDTO $dto) {
+    public function __construct(SaleDTO $dto)
+    {
         $this->id = $dto->id ?? 0;
         $this->totalProductValue = $dto->totalProductValue;
         $this->totalTaxValue = $dto->totalTaxValue;

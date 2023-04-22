@@ -143,8 +143,6 @@ class Product implements Entity
         } else {
             $this->createdAt = $dateTime;
         }
-
-
     }
 
     /**
@@ -166,7 +164,7 @@ class Product implements Entity
             $this->updatedAt = $dateTime;
         }
     }
-    
+
     /**
      * Returns the DTO for the Entity
      *
