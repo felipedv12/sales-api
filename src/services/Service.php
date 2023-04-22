@@ -1,9 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\DTOs\DTOEntity;
 use App\Entities\Entity;
 use App\Repositories\Repository;
-use App\Utils\Utils;
 use App\Validators\Validator;
 
 abstract class Service
@@ -20,18 +20,13 @@ abstract class Service
     abstract protected function getRepositoryClass(): string;
 
     /**
-     * Returns the entity class in the implemented method
-     *
-     * @return string
-     */
-    abstract protected function getEntityClass(): string;
-
-    /**
      * Returns the validator class in the implemented method
      *
      * @return string
      */
     abstract protected function getValidatorClass(): string;
+
+    abstract protected function getDTOClass(): string;
 
     /**
      * Receive the request and dispatch to the correct method
@@ -42,13 +37,13 @@ abstract class Service
      */
     public function preparePersist(array $params): array
     {
-        $entity = Utils::getEntityFromArray($params, $this->getEntityClass());
+        $dto = $this->getEntityFromArray($params, $this->getDTOClass());
 
         $result = null;
-        if ($entity->getId()) {
-            $result = $this->update($entity);
+        if ($dto->id) {
+            $result = $this->update($dto->toEntity());
         } else {
-            $result = $this->create($entity);
+            $result = $this->create($dto->toEntity());
         }
         return $result;
     }
@@ -67,8 +62,6 @@ abstract class Service
         $validation = $this->getValidator()->validate($jsonParams, $id);
         return $validation;
     }
-
-
 
     /**
      * Lists all registers of the table
@@ -161,6 +154,32 @@ abstract class Service
             $this->validator = new $validatorClass($this->getRepository());
         }
         return $this->validator;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $array
+     * @param string $entityClass
+     * @return DTOEntity
+     */
+    protected function getEntityFromArray(array $array, string $entityClass): DTOEntity
+    {
+        $entity = new $entityClass();
+        foreach ($array as $key => $value) {
+            if (property_exists($entity, $key)) {
+                // Checks if the value is an array
+                if (is_array($value)) {
+                    $propertyClassMethod = $key . 'Class';
+                    //Checks if the custom method exists in the class
+                    if (method_exists($entity, $propertyClassMethod)) {
+                        $value = $this->getEntityFromArray($value, $entity->$propertyClassMethod());
+                    }
+                }
+                $entity->$key = $value;
+            }
+        }
+        return $entity;
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Entities\Entity;
+use App\DTOs\ProductTypeDTO;
 use App\Entities\ProductType;
 use App\Repositories\ProductTypeRepository;
 use App\Validators\ProductTypeValidator;
@@ -36,6 +36,16 @@ class ProductTypeService extends Service
     protected function getValidatorClass(): string
     {
         return ProductTypeValidator::class;
+    }
+
+    /**
+     * Rerturns the DTO class
+     *
+     * @return string
+     */
+    protected function getDTOClass(): string 
+    {
+        return ProductTypeDTO::class;
     }
 
 }

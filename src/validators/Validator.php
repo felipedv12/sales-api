@@ -103,7 +103,7 @@ abstract class Validator
             ]);
             if (!empty($result['data'])) {
                 foreach($result['data'] as $data){
-                    if ($data['id'] !== $id) {
+                    if ($data->id !== $id) {
                         $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Already exists in the table.');
                     }
                 }

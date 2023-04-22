@@ -1,9 +1,8 @@
 <?php
 namespace App\Entities;
+use App\DTOs\DTOEntity;
 
 interface Entity 
 {
-    public function toArray() : array;
-
-    public function set(string $property, mixed $value) : void;
+    public function toDTO() : DTOEntity;
 }

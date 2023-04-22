@@ -1,11 +1,10 @@
 <?php
 namespace App\Repositories;
 
+use App\DTOs\ProductDTO;
 use App\Entities\Entity;
 use App\Entities\Product;
-use App\Entities\ProductType;
 use App\Utils\Consts;
-use App\Utils\Utils;
 
 class ProductRepository extends Repository
 {
@@ -79,19 +78,18 @@ class ProductRepository extends Repository
     {
     
         $relationRepository = new ProductTypeRepository();
-        $productType = Utils::getEntityFromArray($relationRepository->findById($result['product_type_id'])['data'], ProductType::class);
-        $entity = new Product();
-        $entity->allParams(
-            $result['id'],
-            $result['name'],
-            $result['barcode'],
-            $result['description'],
-            $result['price'],
-            $productType,
-            $result['created_at'],
-            $result['updated_at']
-        );
-        return $entity;
+        $productType = $relationRepository->findById($result['product_type_id'])['data'];
+        $dto = new ProductDTO();
+        $dto->id = $result['id'];
+        $dto->name = $result['name'];
+        $dto->barcode = $result['barcode'];
+        $dto->description = $result['description'];
+        $dto->price = $result['price'];
+        $dto->productType = $productType;
+        $dto->createdAt = $result['created_at'];
+        $dto->updatedAt = $result['updated_at'];
+        
+        return $dto->toEntity();
     }
 
 }

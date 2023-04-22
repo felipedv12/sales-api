@@ -1,6 +1,8 @@
 <?php
 namespace App\Entities;
 
+use App\DTOs\DTOEntity;
+use App\DTOs\SaleDTO;
 use App\Utils\Consts;
 use DateTime;
 use DateTimeZone;
@@ -19,27 +21,17 @@ class Sale implements Entity
     /**
      * Creates a new Sale object
      *
-     * @param integer|null $id
-     * @param float $totalProductValue
-     * @param float $totalTaxValue
-     * @param string|null $createdAt
-     * @param string|null $updatedAt
+     * @param SaleDTO $dto
      * @return void
      */
-    public function allParams(
-        ?int $id,
-        float $totalProductValue,
-        float $totalTaxValue,
-        ?string $createdAt,
-        ?string $updatedAt
-    ) {
+    public function __construct(SaleDTO $dto) {
         $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
 
-        $this->id = $id;
-        $this->totalProductValue = $totalProductValue;
-        $this->totalTaxValue = $totalTaxValue;
-        $this->createdAt = $createdAt ? new DateTime($createdAt) : $dateTime;
-        $this->updatedAt = $updatedAt ? new DateTime($updatedAt) : $dateTime;
+        $this->id = $dto->id;
+        $this->totalProductValue = $dto->totalProductValue;
+        $this->totalTaxValue = $dto->totalTaxValue;
+        $this->createdAt = $dto->createdAt ? new DateTime($dto->createdAt) : $dateTime;
+        $this->updatedAt = $dto->updatedAt ? new DateTime($dto->updatedAt) : $dateTime;
     }
 
     /**
@@ -73,28 +65,6 @@ class Sale implements Entity
     }
 
     /**
-     * Get the object in array format
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return get_object_vars($this);
-    }
-
-    /**
-     * Set an property in the class
-     *
-     * @param string $property
-     * @param mixed $value
-     * @return void
-     */
-    public function set(string $property, mixed $value): void
-    {
-        $this->$property = $value;
-    }
-
-    /**
      * Get the value of createdAt
      */
     public function getCreatedAt(): DateTime
@@ -116,5 +86,22 @@ class Sale implements Entity
             return new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
         }
         return $this->updatedAt;
+    }
+
+    /**
+     * Returns the DTO for the Entity
+     *
+     * @return DTOEntity
+     */
+    public function toDTO(): DTOEntity
+    {
+        $dto = new SaleDTO();
+        $dto->id = $this->getId();
+        $dto->totalProductValue = $this->getTotalProductValue();
+        $dto->totalTaxValue = $this->getTotalTaxValue();
+        $dto->createdAt = $this->getCreatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
+        $dto->updatedAt = $this->getUpdatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
+
+        return $dto;
     }
 }

@@ -1,6 +1,9 @@
 <?php
 namespace App\Entities;
 
+use App\DTOs\DTOEntity;
+use App\DTOs\ProductTypeDTO;
+
 /**
  * Product Type entity
  */
@@ -11,17 +14,19 @@ class ProductType implements Entity
     private float $taxPercentage;
 
     /**
-     * Create a new product type object
+     * Create a new ProductType object
      *
-     * @param integer|null $id
-     * @param string $name
-     * @param float $taxPercentage
+     * @param ProductTypeDTO $dto
      */
-    public function allParams(string $name, float $taxPercentage, ?int $id = null)
+    public function __construct(ProductTypeDTO $dto)
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->taxPercentage = $taxPercentage;
+        $this->id = $dto->id;
+        if(isset($dto->name)){
+            $this->name = $dto->name;
+        }
+        if(isset($dto->taxPercentage)){
+            $this->taxPercentage = $dto->taxPercentage;
+        }
     }
 
     /**
@@ -54,19 +59,17 @@ class ProductType implements Entity
         return $this->taxPercentage;
     }
 
-    public function set(string $property, mixed $value): void
-    {
-        $this->$property = $value;
-    }
-
     /**
-     * Get the object in array format
+     * Returns the DTO for the Entity
      *
-     * @return array
+     * @return DTOEntity
      */
-    public function toArray(): array
+    public function toDTO(): DTOEntity
     {
-        return get_object_vars($this);
+        $dto = new ProductTypeDTO();
+        $dto->id = $this->getId();
+        $dto->name = $this->getName();
+        $dto->taxPercentage = $this->getTaxPercentage();
+        return $dto;
     }
-
 }

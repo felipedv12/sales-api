@@ -1,6 +1,8 @@
 <?php
 namespace App\Entities;
 
+use App\DTOs\DTOEntity;
+use App\DTOs\ProductDTO;
 use App\Utils\Consts;
 use DateTime;
 use DateTimeZone;
@@ -19,37 +21,23 @@ class Product implements Entity
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
 
-    public function __construct()
-    {
-        $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
-        $this->createdAt = $dateTime;
-        $this->updatedAt = $dateTime;
-    }
-
     /**
      * Creates a new Product object
      *
-     * @param integer|null $id
-     * @param string $name
-     * @param string $barcode
-     * @param string|null $description
-     * @param float $price
-     * @param ProductType $productType
-     * @param string|null $createdAt
-     * @param string|null $updatedAt
+     * @param ProductDTO $dto
      * @return void
      */
-    public function allParams(?int $id, string $name, string $barcode, ?string $description, float $price, ProductType $productType, ?string $createdAt, ?string $updatedAt)
+    public function __construct(ProductDTO $dto)
     {
         $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
-        $this->id = $id;
-        $this->name = $name;
-        $this->barcode = $barcode;
-        $this->description = $description;
-        $this->price = $price;
-        $this->productType = $productType;
-        $this->createdAt = $createdAt ? new DateTime($createdAt) : $dateTime;
-        $this->updatedAt = $updatedAt ? new DateTime($updatedAt) : $dateTime;
+        $this->id = $dto->id;
+        $this->name = $dto->name;
+        $this->barcode = $dto->barcode;
+        $this->description = isset($dto->description) ? $dto->description : null;
+        $this->price = $dto->price;
+        $this->productType = $dto->productType->toEntity();
+        $this->createdAt = isset($dto->createdAt) ? new DateTime($dto->createdAt) : $dateTime;
+        $this->updatedAt = isset($dto->updatedAt) ? new DateTime($dto->updatedAt) : $dateTime;
     }
 
     /**
@@ -136,56 +124,25 @@ class Product implements Entity
             return new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
         }
         return $this->updatedAt;
-    }
-
+    }   
+    
     /**
-     * Set the value of id
+     * Returns the DTO for the Entity
      *
-     * @param int $id
-     *
-     * @return self
+     * @return DTOEntity
      */
-    public function setId(int $id): self
+    public function toDTO(): DTOEntity
     {
-        $this->id = $id;
+        $dto = new ProductDTO();
+        $dto->id = $this->getId();
+        $dto->name = $this->getName();
+        $dto->barcode = $this->getBarcode();
+        $dto->description = $this->getDescription();
+        $dto->price = $this->getPrice();
+        $dto->productType = $this->getProductType()->toDTO();
+        $dto->createdAt = $this->getCreatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
+        $dto->updatedAt = $this->getUpdatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
 
-        return $this;
-    }
-
-    /**
-     * Get the object in array format
-     *
-     * @return array
-     */
-    public function toArray(): array
-    {
-        $array = get_object_vars($this);
-        if (isset($this->productType)){
-            $array['productType'] = $this->productType->toArray();
-        }
-        
-        return $array;
-    }
-
-    /**
-     * Set properties
-     *
-     * @param string $property
-     * @param mixed $value
-     * @return void
-     */
-    public function set(string $property, mixed $value): void
-    {
-        $this->$property = $value;
-    }
-
-    /**
-     * Get the class type of the Product Type relation
-     *
-     * @return string
-     */
-    public function productTypeClass(): string
-    {
-        return ProductType::class;
+        return $dto;
     }
 }

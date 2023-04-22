@@ -61,8 +61,7 @@ abstract class Repository
             $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
             $this->data = array_map(function ($result) {
-                $entity = $this->getListMapping($result);
-                return $entity->toArray();
+                return $this->getListMapping($result)->toDTO();
             }, $results);
 
             if (!$this->data) {
@@ -93,8 +92,7 @@ abstract class Repository
             $result = $statement->fetch(PDO::FETCH_ASSOC);
 
             if ($result) {
-                $entity = $this->getListMapping($result);
-                $this->data = $entity->toArray();
+                $this->data = $this->getListMapping($result)->toDTO();
             } else {
                 $this->code = Consts::HTTP_CODE_NOT_FOUND;
                 $this->message = 'ID not found on database';
@@ -122,7 +120,6 @@ abstract class Repository
             $statement = $this->db->prepare($this->getInsertStatement());
             $statement->execute($this->getInsertParams($entity));
             $result = $statement->fetch(PDO::FETCH_ASSOC);
-            $entity->set('id', $result['id']);
             $this->findById($result['id']);
             if (!empty($this->data)) {
                 $this->code = Consts::HTTP_CODE_CREATED;
@@ -154,7 +151,7 @@ abstract class Repository
             $statement = $this->db->prepare($this->getUpdateStatement());
             $statement->execute($this->getUpdateParams($entity));
 
-            $this->data = $this->findById($entity->getId())['data'];
+            $this->findById($entity->getId())['data'];
         } catch (PDOException $e) {
             $message = 'Error connecting to database: ' . $e->getMessage();
             $this->setResults(false, $message, Consts::HTTP_CODE_SERVER_ERROR);

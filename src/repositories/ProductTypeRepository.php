@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use App\DTOs\ProductTypeDTO;
 use App\Entities\Entity;
 use App\Entities\ProductType;
 
@@ -64,12 +65,11 @@ class ProductTypeRepository extends Repository
 
     protected function getListMapping(array $result): Entity
     {
-        $entity = new ProductType();
-        $entity->allParams(
-            $result['name'],
-            $result['tax_percentage'],
-            $result['id']
-        );
-        return $entity;
+        $dto = new ProductTypeDTO();
+        $dto->id = $result['id'];
+        $dto->name = $result['name'];
+        $dto->taxPercentage = $result['tax_percentage'];
+        
+        return $dto->toEntity();
     }
 }

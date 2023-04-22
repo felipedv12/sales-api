@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories;
 
+use App\DTOs\SaleDTO;
 use App\Entities\Entity;
-use App\Entities\Sale;
 use App\Utils\Consts;
 
 class SaleRepository extends Repository
@@ -13,7 +13,7 @@ class SaleRepository extends Repository
     }
 
     protected function getInsertStatement(): string
-    {   
+    {
         return 'INSERT INTO public.sale(
             total_product_value, total_tax_value, created_at, updated_at)
             VALUES (:total_product_value, :total_tax_value,  :created_at, :updated_at)
@@ -68,15 +68,14 @@ class SaleRepository extends Repository
 
     protected function getListMapping(array $result): Entity
     {
-        $entity = new Sale();
-        $entity->allParams(
-            $result['id'],
-            $result['total_product_value'],
-            $result['total_tax_value'],
-            $result['created_at'],
-            $result['updated_at']
-        );
-        return $entity;
+        $dto = new SaleDTO();
+        $dto->id = $result['id'];
+        $dto->totalProductValue = $result['total_product_value'];
+        $dto->totalTaxValue = $result['total_tax_value'];
+        $dto->createdAt = $result['created_at'];
+        $dto->updatedAt = $result['updated_at'];
+
+        return $dto->toEntity();
     }
 
 }
