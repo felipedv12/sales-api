@@ -1,5 +1,7 @@
 <?php
 namespace App\Entities;
+use App\DTOs\DTOEntity;
+use App\DTOs\SaleItemDTO;
 
 class SaleItem implements Entity
 {
@@ -15,23 +17,17 @@ class SaleItem implements Entity
     /**
      * Creates a new Sale Item
      *
-     * @param integer|null $id
-     * @param Product $product
-     * @param Sale $sale
-     * @param integer|null $itemNumber
-     * @param float $soldAmount
-     * @param float|null $productValue
-     * @param float|null $taxValue
+     * @param SaleItemDTO $dto
      * @return void
      */
-    public function allParams(?int $id, Product $product, Sale $sale, ?int $itemNumber, float $soldAmount, ?float $productValue, ?float $taxValue): void
+    public function __construct(SaleItemDTO $dto)
     {
-        $this->id = $id;
-        $this->product = $product;
-        $this->itemNumber = $itemNumber;
-        $this->soldAmount = $soldAmount;
-        $this->productValue = $productValue ?? ($this->product->getPrice() * $soldAmount);
-        $this->taxValue = $taxValue?? ($this->product->getProductType()->getTaxPercentage() * $this->productValue / 100);
+        $this->id = $dto->id;
+        $this->product = $dto->product->toEntity();
+        $this->itemNumber = $dto->itemNumber;
+        $this->soldAmount = $dto->soldAmount;
+        $this->productValue = $dto->productValue ?? ($this->product->getPrice() * $dto->soldAmount);
+        $this->taxValue = $dto->taxValue?? ($this->product->getProductType()->getTaxPercentage() * $this->productValue / 100);
     }
     
     /**
@@ -104,24 +100,17 @@ class SaleItem implements Entity
         return $this->taxValue;
     }
 
-    public function set(string $property, mixed $value): void
+    public function toDTO(): DTOEntity
     {
-        $this->$property = $value;
+        $dto = new SaleItemDTO();
+        $dto->id = $this->getId();
+        $dto->product = $this->getProduct()->toDTO();
+        $dto->sale = $this->getSale()->toDTO();
+        $dto->itemNumber = $this->getItemNumber();
+        $dto->productValue = $this->getProductValue();
+        $dto->taxValue = $this->getTaxValue();
+
+        return $dto;
     }
-
-    public function toArray()
-    {
-        $array = get_object_vars($this);
-        if (isset($this->product)) {
-            $array['product'] = $this->product->toArray();
-        }
-
-        if (isset($this->sale)) {
-            $array['sale'] = $this->sale->toArray();
-        }
-
-        return $array;
-    }
-
 
 }
