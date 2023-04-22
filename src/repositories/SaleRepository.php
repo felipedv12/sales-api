@@ -37,7 +37,7 @@ class SaleRepository extends Repository
     {
         return 'SELECT id, total_product_value, total_tax_value, created_at, updated_at
         FROM public.sale 
-        WHERE p.id = :id;';
+        WHERE id = :id;';
     }
 
     protected function getDeleteByIdStatement(): string

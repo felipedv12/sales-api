@@ -94,7 +94,7 @@ $router->addRoute('GET', '/sales/(\d+)', function ($id) {
 $router->addRoute('POST', '/sales', function () {
     $controller = new SaleController();
     $body = file_get_contents("php://input");
-    return $controller->save($body);
+    return $controller->saveSale($body);
 });
 
 $result = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

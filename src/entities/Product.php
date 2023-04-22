@@ -29,15 +29,14 @@ class Product implements Entity
      */
     public function __construct(ProductDTO $dto)
     {
-        $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
-        $this->id = $dto->id;
+        $this->id = $dto->id ?? 0;
         $this->name = $dto->name;
         $this->barcode = $dto->barcode;
-        $this->description = isset($dto->description) ? $dto->description : null;
+        $this->description = $dto->description ?? null;
         $this->price = $dto->price;
         $this->productType = $dto->productType->toEntity();
-        $this->createdAt = isset($dto->createdAt) ? new DateTime($dto->createdAt) : $dateTime;
-        $this->updatedAt = isset($dto->updatedAt) ? new DateTime($dto->updatedAt) : $dateTime;
+        $this->setCreatedAt($dto->createdAt ?? null);
+        $this->setUpdatedAt($dto->updatedAt ?? null);
     }
 
     /**
@@ -124,7 +123,49 @@ class Product implements Entity
             return new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
         }
         return $this->updatedAt;
-    }   
+    }
+
+    /**
+     * Sets the timestamp created_at
+     *
+     * @param string|null $date
+     * @return void
+     */
+    private function setCreatedAt(?string $date)
+    {
+        $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
+        if (isset($date)) {
+            $createdAt = DateTime::createFromFormat('d/m/Y H:i:s', $date);
+            if (!$createdAt) {
+                $createdAt = new DateTime($date);
+            }
+            $this->createdAt = $createdAt ?? $dateTime;
+        } else {
+            $this->createdAt = $dateTime;
+        }
+
+
+    }
+
+    /**
+     * Sets the timestamp updated_at
+     *
+     * @param mixed $date
+     * @return void
+     */
+    private function setUpdatedAt(mixed $date): void
+    {
+        $dateTime = new DateTime('now', new DateTimeZone(Consts::DATE_TIMEZONE));
+        if (isset($dto->updatedAt)) {
+            $updatedAt = DateTime::createFromFormat('d/m/Y H:i:s', $date);
+            if (!$updatedAt) {
+                $updatedAt = new DateTime($date);
+            }
+            $this->updatedAt = $updatedAt ?? $dateTime;
+        } else {
+            $this->updatedAt = $dateTime;
+        }
+    }
     
     /**
      * Returns the DTO for the Entity

@@ -28,11 +28,11 @@ class SaleValidator extends Validator
             $this->validateIfIdExists($id);
         }
 
-        $this->validateEmptyNumeric('totalProductValue', $params['totalProductValue']);
-        $this->validatePositiveNumeric('totalProductValue', $params['totalProductValue']);
+        $this->validateEmptyArray('product', $params['product']);
+        $this->validateEmptyNumeric('product-id', $params['product']['id']);
 
-        $this->validateEmptyNumeric('totalTaxValue', $params['totalTaxValue']);
-        $this->validatePositiveNumeric('totalTaxValue', $params['totalTaxValue']);
+        $this->validateEmptyNumeric('soldAmount', $params['soldAmount']);
+        $this->validatePositiveNumeric('soldAmount', $params['soldAmount']);
 
         return $this->getValidationResults($params);
     }

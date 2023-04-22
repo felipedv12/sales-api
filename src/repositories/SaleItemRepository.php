@@ -17,7 +17,7 @@ class SaleItemRepository extends Repository
     {
         return 'INSERT INTO public.sale_item(
             product_id, sale_id, item_number, sold_amount, product_value, tax_value)
-            VALUES (:product_id, :sale_id, :item_number, :sold_amount, :product_value, :tax_value);
+            VALUES (:product_id, :sale_id, :item_number, :sold_amount, :product_value, :tax_value)
             RETURNING id;';
     }
 
@@ -38,7 +38,7 @@ class SaleItemRepository extends Repository
     {
         return 'SELECT id, product_id, sale_id, item_number, sold_amount, product_value, tax_value
         FROM public.sale_item
-        WHERE p.id = :id;';
+        WHERE id = :id;';
     }
 
     protected function getDeleteByIdStatement(): string
@@ -90,5 +90,7 @@ class SaleItemRepository extends Repository
 
         return $dto->toEntity();
     }
+
+    
 
 }
