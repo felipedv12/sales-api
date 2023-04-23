@@ -98,5 +98,6 @@ $router->addRoute('POST', '/sales', function () {
 });
 
 $result = $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-
-echo (json_encode($result));
+$json = json_encode($result);
+$error = json_last_error_msg();
+echo ($json);

@@ -40,7 +40,7 @@ class SaleService extends Service
      */
     public function persistSale(array $params): array
     {
-        $validationResults = $this->validateParams($params);
+        $validationResults = $this->validateSaleParams($params);
         if (!$validationResults['success']) {
             return $validationResults;
         }
@@ -122,7 +122,7 @@ class SaleService extends Service
      * @param array $params
      * @return array
      */
-    private function validateParams(array $params): array
+    private function validateSaleParams(array $params): array
     {
         foreach ($params as $item) {
             $validation = $this->getValidator()->validate($item, 0);
@@ -143,6 +143,15 @@ class SaleService extends Service
      */
     private function createSaleItem(SaleItem $entity, SaleItemRepository $repository): array
     {
-        return $repository->create($entity);;
+        return $repository->create($entity);
+        ;
+    }
+
+    public function find(int $id): array
+    {
+        $results = $this->getRepository()->list([
+            ['field' => 's.id', 'operator' => '=', 'value' => $id, 'parameter' => 'id']
+        ]);
+        return $results;
     }
 }

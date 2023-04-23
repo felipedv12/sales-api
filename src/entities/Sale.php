@@ -15,6 +15,7 @@ class Sale implements Entity
     private ?int $id;
     private float $totalProductValue;
     private float $totalTaxValue;
+    private ?array $items;
     private DateTime $createdAt;
     private DateTime $updatedAt;
 
@@ -29,6 +30,7 @@ class Sale implements Entity
         $this->id = $dto->id ?? 0;
         $this->totalProductValue = $dto->totalProductValue;
         $this->totalTaxValue = $dto->totalTaxValue;
+        $this->items = $dto->items ?? null;
         $this->setCreatedAt($dto->createdAt ?? null);
         $this->setUpdatedAt($dto->updatedAt ?? null);
     }
@@ -61,6 +63,16 @@ class Sale implements Entity
     public function getTotalTaxValue(): float
     {
         return $this->totalTaxValue;
+    }
+
+    /**
+     * Get the value of items
+     *
+     * @return ?array
+     */
+    public function getItems(): ?array
+    {
+        return $this->items;
     }
 
     /**
@@ -140,9 +152,12 @@ class Sale implements Entity
         $dto->id = $this->getId();
         $dto->totalProductValue = $this->getTotalProductValue();
         $dto->totalTaxValue = $this->getTotalTaxValue();
+        $dto->items = $this->getItems();
         $dto->createdAt = $this->getCreatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
         $dto->updatedAt = $this->getUpdatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
 
         return $dto;
     }
+
+    
 }

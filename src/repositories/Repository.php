@@ -47,7 +47,7 @@ abstract class Repository
     /**
      * Gets a list of rows of the table
      *
-     * @param array $conditions Optional array with the format: ['field','operator', 'value']
+     * @param array $conditions Optional array with the format: ['field','operator', 'value', ?'parameter'] optional 'parameter'
      * @return array
      */
     public function list(array $conditions = []): array
@@ -210,11 +210,11 @@ abstract class Repository
         $isFirstParam = true;
         foreach ($conditions as $condition) {
             if ($isFirstParam) {
-                $where = ' WHERE ' . $condition['field'] . $condition['operator'] . ':' . $condition['field'];
+                $where = ' WHERE ' . $condition['field'] . $condition['operator'] . ' :' . ($condition['parameter'] ?? $condition['field']);
             } else {
-                $where .= ' AND ' . $condition['field'] . $condition['operator'] . ':' . $condition['field'];
+                $where .= ' AND ' . $condition['field'] . $condition['operator'] . ' :' . ($condition['parameter'] ?? $condition['field']);
             }
-            $params[$condition['field']] = $condition['value'];
+            $params[($condition['parameter'] ?? $condition['field'])] = $condition['value'];
         }
 
         return ['where' => $where, 'params' => $params];

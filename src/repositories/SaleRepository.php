@@ -1,12 +1,21 @@
 <?php
 namespace App\Repositories;
 
+use App\DTOs\ProductDTO;
+use App\DTOs\ProductTypeDTO;
 use App\DTOs\SaleDTO;
+use App\DTOs\SaleItemDTO;
 use App\Entities\Entity;
 use App\Utils\Consts;
+use Exception;
+use PDO;
+use PDOException;
 
 class SaleRepository extends Repository
 {
+
+    private SaleItemRepository $relationRepository;
+
     public function __construct()
     {
         parent::__construct();
@@ -29,15 +38,27 @@ class SaleRepository extends Repository
 
     protected function getListStatement(): string
     {
-        return 'SELECT id, total_product_value, total_tax_value, created_at, updated_at
-        FROM public.sale';
+        return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at, 
+        si.id as item_id, si.item_number, si.sold_amount, si.product_value, si.tax_value,
+        p.id as product_id, p.name, p.barcode, p.description, p.price, p.created_at as product_created_at, p.updated_at AS product_updated_at,
+        pt.id as type_id, p.name as type_name, pt.tax_percentage
+        FROM public.sale s 
+        INNER JOIN public.sale_item si ON s.id = si.sale_id
+        INNER JOIN public.product p ON si.product_id = p.id
+        INNER JOIN public.product_type pt ON p.product_type_id = pt.id';
     }
 
     protected function getFindByIdStatement(): string
     {
-        return 'SELECT id, total_product_value, total_tax_value, created_at, updated_at
-        FROM public.sale 
-        WHERE id = :id;';
+        return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at, 
+        si.id as item_id, si.item_number, si.sold_amount, si.product_value, si.tax_value,
+        p.id as product_id, p.name, p.barcode, p.description, p.price, p.created_at as product_created_at, p.updated_at AS product_updated_at,
+        pt.id as type_id, p.name as type_name, pt.tax_percentage
+        FROM public.sale s 
+        INNER JOIN public.sale_item si ON s.id = si.sale_id
+        INNER JOIN public.product p ON si.product_id = p.id
+        INNER JOIN public.product_type pt ON p.product_type_id = pt.id; 
+        WHERE s.id = :id;';
     }
 
     protected function getDeleteByIdStatement(): string
@@ -78,4 +99,81 @@ class SaleRepository extends Repository
         return $dto->toEntity();
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param array $conditions
+     * @return array
+     */
+    public function list(array $conditions = []): array
+    {
+
+        $this->initializeRepositoryProperties();
+
+        $where = $this->getWhereAndParams($conditions);
+        try {
+            $statement = $this->db->prepare($this->getListStatement() . $where['where']);
+            $statement->execute($where['params']);
+            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $this->data = $this->getMappingSale($results);
+            if (!$this->data) {
+                $this->code = Consts::HTTP_CODE_NOT_FOUND;
+            }
+        } catch (PDOException $e) {
+            $message = 'Error connecting to database: ' . $e->getMessage();
+            $this->setResults(false, $message, Consts::HTTP_CODE_SERVER_ERROR);
+            throw new Exception($message);
+        } finally {
+            return $this->getResults();
+        }
+        return [];
+    }
+
+    private function getMappingSale(array $results): array
+    {
+        $sales = [];
+        $items = [];
+        foreach ($results as $row) {
+            // creates the partial DTO
+            $saleDTO = new SaleDTO();
+            $saleDTO->id = $row['id'];
+            $saleDTO->totalProductValue = $row['total_product_value'];
+            $saleDTO->totalTaxValue = $row['total_tax_value'];
+            $saleDTO->createdAt = $row['created_at'];
+            $saleDTO->updatedAt = $row['updated_at'];
+
+            // if index doesn't exists, is a new item
+            if (!isset($sales[$saleDTO->id])) {
+                $sales[$saleDTO->id] = $saleDTO;
+            }
+
+            $productTypeDTO = new ProductTypeDTO();
+            $productTypeDTO->id = $row['type_id'];
+            $productTypeDTO->name = $row['type_name'];
+            $productTypeDTO->taxPercentage = $row['tax_percentage'];
+
+            $productDTO = new ProductDTO();
+            $productDTO->id = $row['product_id'];
+            $productDTO->name = $row['name'];
+            $productDTO->barcode = $row['barcode'];
+            $productDTO->description = $row['description'];
+            $productDTO->price = $row['price'];
+            $productDTO->createdAt = $row['product_created_at'];
+            $productDTO->updatedAt = $row['product_updated_at'];
+            $productDTO->productType = $productTypeDTO;
+
+            $saleItemDTO = new SaleItemDTO();
+            $saleItemDTO->id = $row['item_id'];
+            $saleItemDTO->itemNumber = $row['item_number'];
+            $saleItemDTO->soldAmount = $row['sold_amount'];
+            $saleItemDTO->productValue = $row['product_value'];
+            $saleItemDTO->taxValue = $row['tax_value'];
+            $saleItemDTO->product = $productDTO;
+            if (!isset($items[$saleDTO->id][$saleItemDTO->itemNumber])) {
+                $items[$saleDTO->id][$saleItemDTO->itemNumber] = $saleItemDTO;
+            }
+            $sales[$saleDTO->id]->items = $items[$saleDTO->id];
+        }
+        return $sales;
+    }
 }

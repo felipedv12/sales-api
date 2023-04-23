@@ -6,7 +6,7 @@ class SaleDTO extends DTOEntity
 {
     public float $totalProductValue;
     public float $totalTaxValue;
-    public array $items;
+    public ?array $items;
     public string $createdAt;
     public string $updatedAt;
 
