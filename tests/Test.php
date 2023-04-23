@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class Test extends TestCase
 {
-    protected $http;
+    protected ?Client $http;
 
     public function setUp(): void
     {
