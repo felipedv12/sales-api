@@ -3,6 +3,7 @@ namespace App\Validators;
 
 use App\Repositories\Repository;
 use App\Utils\Consts;
+use App\Utils\MessagesPT;
 
 abstract class Validator
 {
@@ -30,7 +31,7 @@ abstract class Validator
     {
         $this->success = false;
         $this->code = $code;
-        $this->errors[$paramName][] = ['message' => $message];
+        $this->errors[$paramName]= ['message' => $message];
     }
 
     /**
@@ -44,7 +45,7 @@ abstract class Validator
         if ($this->success) {
             $result = $this->repository->findById($id);
             if (empty($result['data'])) {
-                $this->validationFail(Consts::HTTP_CODE_NOT_FOUND, 'id', 'ID not found in database.');
+                $this->validationFail(Consts::HTTP_CODE_NOT_FOUND, 'id', MessagesPT::MESSAGE_ID_NOT_FOUND);
             }
         }
     }
@@ -53,7 +54,7 @@ abstract class Validator
     {
         if ($this->success) {
             if ($paramValue === null) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Must not be empty.');
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_NOT_EMPTY);
             }
         }
     }
@@ -62,7 +63,7 @@ abstract class Validator
     {
         if ($this->success) {
             if (empty($paramValue)) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Must not be empty.');
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_NOT_EMPTY);
             }
         }
     }
@@ -71,7 +72,7 @@ abstract class Validator
     {
         if ($this->success) {
             if (empty($paramValue)) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Must not be empty.');
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_NOT_EMPTY);
             }
         }
     }
@@ -80,8 +81,8 @@ abstract class Validator
     protected function validateMaxCharacters(string $paramName, mixed $paramValue, int $maxCharacters): void
     {
         if ($this->success) {
-            if (strlen($paramValue) > 100) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Max size is {$maxCharacters} characters.');
+            if (strlen($paramValue) > $maxCharacters) {
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_MAX_CHARACTERS . $maxCharacters);
             }
         }
     }
@@ -90,7 +91,16 @@ abstract class Validator
     {
         if ($this->success) {
             if ($paramValue < 0) {
-                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Must not be negative.');
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_MUST_BE_POSITIVE);
+            }
+        }
+    }
+
+    protected function validateGreaterThanZero(string $paramName, mixed $paramValue): void
+    {
+        if ($this->success) {
+            if ($paramValue <= 0) {
+                $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_GREATER_THAN_ZERO);
             }
         }
     }
@@ -104,7 +114,7 @@ abstract class Validator
             if (!empty($result['data'])) {
                 foreach($result['data'] as $data){
                     if ($data->id !== $id) {
-                        $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, 'Already exists in the table.');
+                        $this->validationFail(Consts::HTTP_CODE_BAD_REQUEST, $paramName, MessagesPT::MESSAGE_ALREADY_EXISTS);
                     }
                 }
             }

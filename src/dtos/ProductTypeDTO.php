@@ -6,7 +6,7 @@ class ProductTypeDTO extends DTOEntity
 {
     public string $name;
     public float $taxPercentage;
-
+    public bool $allowDelete = false;
     /**
      * Returns the entity for the DTO
      *

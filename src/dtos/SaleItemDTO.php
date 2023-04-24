@@ -5,7 +5,7 @@ use App\Entities\SaleItem;
 class SaleItemDTO extends DTOEntity
 {
     public ProductDTO $product;
-    public SaleDTO $sale;
+    public ?SaleDTO $sale;
     public int $itemNumber;
     public float $soldAmount;
     public float $productValue;

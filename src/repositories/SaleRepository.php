@@ -50,14 +50,8 @@ class SaleRepository extends Repository
 
     protected function getFindByIdStatement(): string
     {
-        return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at, 
-        si.id as item_id, si.item_number, si.sold_amount, si.product_value, si.tax_value,
-        p.id as product_id, p.name, p.barcode, p.description, p.price, p.created_at as product_created_at, p.updated_at AS product_updated_at,
-        pt.id as type_id, p.name as type_name, pt.tax_percentage
+        return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at
         FROM public.sale s 
-        INNER JOIN public.sale_item si ON s.id = si.sale_id
-        INNER JOIN public.product p ON si.product_id = p.id
-        INNER JOIN public.product_type pt ON p.product_type_id = pt.id; 
         WHERE s.id = :id;';
     }
 
@@ -144,6 +138,10 @@ class SaleRepository extends Repository
 
             // if index doesn't exists, is a new item
             if (!isset($sales[$saleDTO->id])) {
+                $entity = $saleDTO->toEntity();
+                $saleDTO->createdAt = $entity->getCreatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
+                $saleDTO->updatedAt = $entity->getUpdatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
+                
                 $sales[$saleDTO->id] = $saleDTO;
             }
 
@@ -174,6 +172,18 @@ class SaleRepository extends Repository
             }
             $sales[$saleDTO->id]->items = $items[$saleDTO->id];
         }
-        return $sales;
+
+        $resultArray = [];
+        $resultItems = [];
+        foreach($sales as $sale) {
+            foreach($sale->items as $item){
+                array_push($resultItems, $item);
+            }
+            $sale->items = $resultItems;
+            array_push($resultArray, $sale);
+            
+            $resultItems = [];
+        }
+        return $resultArray;
     }
 }

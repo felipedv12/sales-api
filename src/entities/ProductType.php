@@ -12,6 +12,7 @@ class ProductType implements Entity
     private ?int $id;
     private string $name;
     private float $taxPercentage;
+    private bool $allowDelete = false;
 
     /**
      * Create a new ProductType object
@@ -27,6 +28,7 @@ class ProductType implements Entity
         if (isset($dto->taxPercentage)) {
             $this->taxPercentage = $dto->taxPercentage;
         }
+        $this->allowDelete = $dto->allowDelete;
     }
 
     /**
@@ -60,6 +62,13 @@ class ProductType implements Entity
     }
 
     /**
+     * Get the value of allowDelete
+     */ 
+    public function getAllowDelete()
+    {
+        return $this->allowDelete;
+    }
+    /**
      * Returns the DTO for the Entity
      *
      * @return DTOEntity
@@ -70,6 +79,7 @@ class ProductType implements Entity
         $dto->id = $this->getId();
         $dto->name = $this->getName();
         $dto->taxPercentage = $this->getTaxPercentage();
+        $dto->allowDelete = $this->getAllowDelete();
         return $dto;
     }
 }

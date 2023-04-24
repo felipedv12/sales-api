@@ -29,6 +29,8 @@ class ProductValidator extends Validator
 
         $this->validatePositiveNumeric('price', $params['price']);
 
+        $this->validateGreaterThanZero('price', $params['price']);
+
         $this->validateEmptyArray('productType', $params['productType']);
 
         $this->validateEmptyNumeric('product-id', $params['productType']['id']);

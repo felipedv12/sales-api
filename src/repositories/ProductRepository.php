@@ -30,15 +30,16 @@ class ProductRepository extends Repository
 
     protected function getListStatement(): string
     {
-        return 'SELECT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at
-        FROM public.product p';
+        return 'SELECT DISTINCT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at, CASE WHEN (si.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
+        FROM public.product p 
+		LEFT JOIN public.sale_item si ON p.id = si.product_id';
     }
 
     protected function getFindByIdStatement(): string
     {
-        return 'SELECT p.id, p.name, barcode, description, price, product_type_id, pt.name as type_name, pt.tax_percentage, p.created_at, p.updated_at
+        return 'SELECT DISTINCT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at, CASE WHEN (si.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
         FROM public.product p 
-        INNER JOIN public.product_type pt ON pt.id = p.product_type_id
+		LEFT JOIN public.sale_item si ON p.id = si.product_id
         WHERE p.id = :id;';
     }
 
@@ -88,6 +89,7 @@ class ProductRepository extends Repository
         $dto->productType = $productType;
         $dto->createdAt = $result['created_at'];
         $dto->updatedAt = $result['updated_at'];
+        $dto->allowDelete = $result['allow_delete'];
         
         return $dto->toEntity();
     }

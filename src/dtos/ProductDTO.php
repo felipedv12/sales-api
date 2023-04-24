@@ -9,6 +9,7 @@ class ProductDTO extends DTOEntity
     public string $barcode;
     public ?string $description;
     public float $price;
+    public bool $allowDelete = false;
     public ProductTypeDTO $productType;
     public string $createdAt;
     public string $updatedAt;

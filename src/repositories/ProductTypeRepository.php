@@ -28,16 +28,17 @@ class ProductTypeRepository extends Repository
 
     protected function getListStatement(): string
     {
-        return 'SELECT id, name, tax_percentage
-        FROM public.product_type
-        ORDER BY name ASC;';
+        return 'SELECT DISTINCT pt.id, pt.name, tax_percentage, CASE WHEN (p.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
+        FROM public.product_type pt 
+        LEFT JOIN public.product p ON pt.id = p.product_type_id';
     }
 
     protected function getFindByIdStatement(): string
     {
-        return 'SELECT id, name, tax_percentage
-        FROM public.product_type
-        WHERE id = :id;';
+        return 'SELECT DISTINCT pt.id, pt.name, tax_percentage, CASE WHEN (p.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
+        FROM public.product_type pt 
+        LEFT JOIN public.product p ON pt.id = p.product_type_id
+        WHERE pt.id= :id';
     }
 
     protected function getDeleteByIdStatement(): string
@@ -69,6 +70,7 @@ class ProductTypeRepository extends Repository
         $dto->id = $result['id'];
         $dto->name = $result['name'];
         $dto->taxPercentage = $result['tax_percentage'];
+        $dto->allowDelete = $result['allow_delete'];
         
         return $dto->toEntity();
     }

@@ -57,7 +57,7 @@ class SaleItem implements Entity
      *
      * @return Sale
      */
-    public function getSale(): Sale
+    public function getSale(): ?Sale
     {
         return $this->sale;
     }
@@ -112,8 +112,9 @@ class SaleItem implements Entity
         $dto = new SaleItemDTO();
         $dto->id = $this->getId();
         $dto->product = $this->getProduct()->toDTO();
-        $dto->sale = $this->getSale()->toDTO();
+        $dto->sale = isset($this->sale) ? $this->getSale()->toDTO() : null;
         $dto->itemNumber = $this->getItemNumber();
+        $dto->soldAmount = $this->getSoldAmount();
         $dto->productValue = $this->getProductValue();
         $dto->taxValue = $this->getTaxValue();
 

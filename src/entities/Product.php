@@ -17,6 +17,7 @@ class Product implements Entity
     private string $barcode;
     private ?string $description;
     private float $price;
+    private bool $allowDelete = false;
     private ProductType $productType;
     private ?DateTime $createdAt;
     private ?DateTime $updatedAt;
@@ -37,6 +38,7 @@ class Product implements Entity
         $this->productType = $dto->productType->toEntity();
         $this->setCreatedAt($dto->createdAt ?? null);
         $this->setUpdatedAt($dto->updatedAt ?? null);
+        $this->allowDelete = $dto->allowDelete;
     }
 
     /**
@@ -87,6 +89,14 @@ class Product implements Entity
     public function getPrice(): float
     {
         return $this->price;
+    }
+    
+    /**
+     * Get the value of allowDelete
+     */ 
+    public function getAllowDelete()
+    {
+        return $this->allowDelete;
     }
 
     /**
@@ -178,6 +188,7 @@ class Product implements Entity
         $dto->barcode = $this->getBarcode();
         $dto->description = $this->getDescription();
         $dto->price = $this->getPrice();
+        $dto->allowDelete = $this->getAllowDelete();
         $dto->productType = $this->getProductType()->toDTO();
         $dto->createdAt = $this->getCreatedAt()->format(Consts::DATE_FORMAT_EXIBITION);
         $dto->updatedAt = $this->getUpdatedAt()->format(Consts::DATE_FORMAT_EXIBITION);

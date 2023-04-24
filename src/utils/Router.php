@@ -37,6 +37,10 @@ class Router
     {
         $request = parse_url($requestUri);
         $path = $request['path'];
+        if($method == 'OPTIONS') {
+            http_response_code(200);
+            return 'OK';
+        } else {
         foreach ($this->routes[$method] as $route => $handler) {
             
             $pattern = '~^' . $route . '$~';
@@ -46,7 +50,9 @@ class Router
                 return call_user_func_array($handler, $matches);
             }
         }
+
         http_response_code(404);
         return "Endpoint not found";
+    }
     }
 }
