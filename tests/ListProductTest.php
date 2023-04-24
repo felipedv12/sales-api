@@ -3,11 +3,11 @@ namespace Tests;
 
 use App\Utils\Consts;
 
-class ListProductTypeTest extends Test
+class ListProductTest extends Test
 {
-    public function testListProductTypes()
+    public function testListProducts()
     {
-        $response = $this->http->request('GET', 'product-types');
+        $response = $this->http->request('GET', 'products');
         $this->assertEquals(Consts::HTTP_CODE_OK, $response->getStatusCode());
         $this->assertContains('application/json', $response->getHeader('Content-Type'));
         $this->assertJson($response->getBody());
