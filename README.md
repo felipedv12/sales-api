@@ -36,7 +36,7 @@ php -S localhost:8080 -t public
 ### Configuração
 
 #### Backup da base de dados
-Deixo em anexo um backup da base de dados utilizada no projeto, mas no diretório database, estão os scripts para criação das estruturas da base de dados.
+Deixo em anexo um backup da base de dados utilizada na raíz do projeto (sales_db.sql), mas no diretório database, estão os scripts para criação das estruturas da base de dados e o diagrama de entidade-relacionamento (ERD).
 
 ##### Restaurando o backup
 O primeiro passo será a criação da base de dados para restaurar o backup:
@@ -124,6 +124,25 @@ Deve ser enviado um JSON com as seguintes informações no corpo da requisição
 * array de objetos com a seguinte estrutura:
 * product->id: se atentar à estrutura: (product: id: 1), campo referente ao produto sendo vendido. Obrigatório.
 * soldAmount: quantidade do produto que foi vendida. Através desses dois campos, conseguimos calcular qual o valor da compra e dos impostos.
+
+### Testes de integração
+Foram implementados alguns testes de integração na API. A escolha pelos testes de integração se deu por serem testes mais ágeis de ser executados, dado o prazo. 
+Para executar os testes é necessário instalar as bibliotecas:
+
+* PHPUnit
+* GuzzleHttp
+
+Ambas foram incluídas como dependências de desenvolvimento, bastando executar o comando:
+
+```
+composer install --dev
+```
+
+Para executar os testes:
+
+```
+composer test
+```
 
 # Considerações finais
 Esta API foi desenvolvida como parte de um projeto de mercado e pode ser usada como base para outras aplicações similares. Se tiver alguma dúvida ou sugestão, por favor, não hesite em entrar em contato conosco.
