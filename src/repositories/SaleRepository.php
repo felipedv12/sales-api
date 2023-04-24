@@ -16,11 +16,19 @@ class SaleRepository extends Repository
 
     private SaleItemRepository $relationRepository;
 
+    /**
+     * Create the object connection with the database, implemented in the parent
+     */
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * Returns the insert statement for querying
+     *
+     * @return string
+     */
     protected function getInsertStatement(): string
     {
         return 'INSERT INTO public.sale(
@@ -29,6 +37,11 @@ class SaleRepository extends Repository
             RETURNING id;';
     }
 
+    /**
+     * Returns the update statement for querying
+     *
+     * @return string
+     */
     protected function getUpdateStatement(): string
     {
         return 'UPDATE public.sale
@@ -36,6 +49,11 @@ class SaleRepository extends Repository
         WHERE id=:id;';
     }
 
+    /**
+     * Returns the select statement for querying
+     *
+     * @return string
+     */
     protected function getListStatement(): string
     {
         return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at, 
@@ -48,6 +66,11 @@ class SaleRepository extends Repository
         INNER JOIN public.product_type pt ON p.product_type_id = pt.id';
     }
 
+    /**
+     * Returns the select statement for querying
+     *
+     * @return string
+     */
     protected function getFindByIdStatement(): string
     {
         return 'SELECT s.id, s.total_product_value, s.total_tax_value, s.created_at, s.updated_at
@@ -55,12 +78,23 @@ class SaleRepository extends Repository
         WHERE s.id = :id;';
     }
 
+    /**
+     * Returns the delete statement for querying
+     *
+     * @return string
+     */
     protected function getDeleteByIdStatement(): string
     {
         return 'DELETE FROM public.sale
         WHERE id=:id;';
     }
 
+    /**
+     * Maps the object with the params of the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
     protected function getInsertParams(Entity $entity): array
     {
         return [
@@ -71,6 +105,12 @@ class SaleRepository extends Repository
         ];
     }
 
+    /**
+     * Maps the object with the params of the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
     protected function getUpdateParams(Entity $entity): array
     {
         return [
@@ -81,6 +121,12 @@ class SaleRepository extends Repository
         ];
     }
 
+    /**
+     * Maps the database results with the entity
+     *
+     * @param array $result
+     * @return Entity
+     */
     protected function getListMapping(array $result): Entity
     {
         $dto = new SaleDTO();
@@ -94,7 +140,7 @@ class SaleRepository extends Repository
     }
 
     /**
-     * Undocumented function
+     * Overrides the parent method, queries the table
      *
      * @param array $conditions
      * @return array
@@ -123,6 +169,12 @@ class SaleRepository extends Repository
         return [];
     }
 
+    /**
+     * Maps the results with the entity
+     *
+     * @param array $results
+     * @return array
+     */
     private function getMappingSale(array $results): array
     {
         $sales = [];

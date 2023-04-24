@@ -12,21 +12,41 @@ use App\Validators\SaleValidator;
 
 class SaleService extends Service
 {
+    /**
+     * Returns the entity to the service
+     *
+     * @return string
+     */
     protected function getEntityClass(): string
     {
         return Sale::class;
     }
 
+    /**
+     * Returns the repository to the service
+     *
+     * @return string
+     */
     protected function getRepositoryClass(): string
     {
         return SaleRepository::class;
     }
 
+    /**
+     * Returns the validator to the service
+     *
+     * @return string
+     */
     protected function getValidatorClass(): string
     {
         return SaleValidator::class;
     }
 
+    /**
+     * Returns the DTO entity to the service
+     *
+     * @return string
+     */
     protected function getDTOClass(): string
     {
         return SaleDTO::class;
@@ -147,6 +167,11 @@ class SaleService extends Service
         ;
     }
 
+    /**
+     * Overrides the find method from the service class
+     *
+     * @return string
+     */
     public function find(int $id): array
     {
         $results = $this->getRepository()->list([

@@ -12,14 +12,38 @@ abstract class Validator
     protected array $errors;
     protected int $code;
 
+    /**
+     * Injects the repository dependency
+     *
+     * @param Repository $repository
+     */
     protected function __construct(Repository $repository)
     {
         $this->repository = $repository;
     }
 
+    /**
+     * Abstract validate method
+     *
+     * @param array $params
+     * @param integer $id
+     * @return array
+     */
     abstract public function validate(array $params, int $id): array;
 
+    /**
+     * Abstract validate delete method
+     *
+     * @param integer $id
+     * @return array
+     */
     abstract public function validateDelete(int $id): array;
+
+    /**
+     * Initialize the properties that will be used in the validation response
+     *
+     * @return void
+     */
     protected function initializeValidationProperties(): void
     {
         $this->success = true;
@@ -27,6 +51,14 @@ abstract class Validator
         $this->errors = [];
     }
 
+    /**
+     * Builds the response for validation errors
+     *
+     * @param integer $code
+     * @param string $paramName
+     * @param string $message
+     * @return void
+     */
     protected function validationFail(int $code, string $paramName, string $message): void
     {
         $this->success = false;
@@ -35,7 +67,7 @@ abstract class Validator
     }
 
     /**
-     * Validate if the received ID exists in the database
+     * Validates if the received ID exists in the database
      *
      * @param integer $id
      * @return void
@@ -50,6 +82,13 @@ abstract class Validator
         }
     }
 
+    /**
+     * Validates if numeric field is empty
+     *
+     * @param string $paramName
+     * @param mixed $paramValue
+     * @return void
+     */
     protected function validateEmptyNumeric(string $paramName, mixed $paramValue): void
     {
         if ($this->success) {
@@ -59,6 +98,13 @@ abstract class Validator
         }
     }
 
+    /**
+     * Validates if string field is empty
+     *
+     * @param string $paramName
+     * @param mixed $paramValue
+     * @return void
+     */
     protected function validateEmptyString(string $paramName, mixed $paramValue): void
     {
         if ($this->success) {
@@ -68,6 +114,13 @@ abstract class Validator
         }
     }
 
+    /**
+     * Validates if array object is empty
+     *
+     * @param string $paramName
+     * @param array|null $paramValue
+     * @return void
+     */
     protected function validateEmptyArray(string $paramName, ?array $paramValue): void
     {
         if ($this->success) {
@@ -78,6 +131,14 @@ abstract class Validator
     }
 
 
+    /**
+     * Validates max characters for strings
+     *
+     * @param string $paramName
+     * @param mixed $paramValue
+     * @param integer $maxCharacters
+     * @return void
+     */
     protected function validateMaxCharacters(string $paramName, mixed $paramValue, int $maxCharacters): void
     {
         if ($this->success) {
@@ -87,6 +148,13 @@ abstract class Validator
         }
     }
 
+    /**
+     * Validates numeric fields that can be only positive
+     *
+     * @param string $paramName
+     * @param mixed $paramValue
+     * @return void
+     */
     protected function validatePositiveNumeric(string $paramName, mixed $paramValue): void
     {
         if ($this->success) {
@@ -96,6 +164,13 @@ abstract class Validator
         }
     }
 
+    /**
+     * Validates if numeric field value is greater than zero
+     *
+     * @param string $paramName
+     * @param mixed $paramValue
+     * @return void
+     */
     protected function validateGreaterThanZero(string $paramName, mixed $paramValue): void
     {
         if ($this->success) {
@@ -104,7 +179,16 @@ abstract class Validator
             }
         }
     }
-
+    
+    /**
+     * Validates fields that can't be duplicated 
+     *
+     * @param string $paramName
+     * @param string $field
+     * @param mixed $value
+     * @param integer $id
+     * @return void
+     */
     protected function validateUniqueField(string $paramName, string $field, mixed $value, int $id): void
     {
         if ($this->success) {
@@ -121,6 +205,12 @@ abstract class Validator
         }
     }
 
+    /**
+     * Returns the validation result
+     *
+     * @param array $params
+     * @return array
+     */
     protected function getValidationResults(array $params): array
     {
         return ['code' => $this->code, 'success' => $this->success, 'data' => $params, 'errors' => $this->errors];

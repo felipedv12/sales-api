@@ -3,16 +3,23 @@ namespace App\Repositories;
 
 use App\DTOs\ProductDTO;
 use App\Entities\Entity;
-use App\Entities\Product;
 use App\Utils\Consts;
 
 class ProductRepository extends Repository
 {
+    /**
+     * Create the object connection with the database, implemented in the parent
+     */
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * Returns the insert statement for querying
+     *
+     * @return string
+     */
     protected function getInsertStatement(): string
     {   
         return 'INSERT INTO public.product(
@@ -21,6 +28,11 @@ class ProductRepository extends Repository
             RETURNING id;';
     }
 
+    /**
+     * Returns the update statement for querying
+     *
+     * @return string
+     */
     protected function getUpdateStatement(): string
     {
         return 'UPDATE public.product
@@ -28,6 +40,11 @@ class ProductRepository extends Repository
         WHERE id=:id;';
     }
 
+    /**
+     * Returns the select statement for querying
+     *
+     * @return string
+     */
     protected function getListStatement(): string
     {
         return 'SELECT DISTINCT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at, CASE WHEN (si.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
@@ -35,6 +52,11 @@ class ProductRepository extends Repository
 		LEFT JOIN public.sale_item si ON p.id = si.product_id';
     }
 
+    /**
+     * Returns the select statement for querying
+     *
+     * @return string
+     */
     protected function getFindByIdStatement(): string
     {
         return 'SELECT DISTINCT p.id, p.name, barcode, description, price, product_type_id, p.created_at, p.updated_at, CASE WHEN (si.id IS NULL) THEN 1 ELSE 0 END AS allow_delete
@@ -43,12 +65,23 @@ class ProductRepository extends Repository
         WHERE p.id = :id;';
     }
 
+    /**
+     * Returns the delete statement for querying
+     *
+     * @return string
+     */
     protected function getDeleteByIdStatement(): string
     {
         return 'DELETE FROM public.product
         WHERE id=:id;';
     }
 
+    /**
+     * Maps the object with the params of the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
     protected function getInsertParams(Entity $entity): array
     {
         return [
@@ -62,6 +95,12 @@ class ProductRepository extends Repository
         ];
     }
 
+    /**
+     * Maps the object with the params of the table
+     *
+     * @param Entity $entity
+     * @return array
+     */
     protected function getUpdateParams(Entity $entity): array
     {
         return [
@@ -75,6 +114,12 @@ class ProductRepository extends Repository
         ];
     }
 
+    /**
+     * Maps the database results with the entity
+     *
+     * @param array $result
+     * @return Entity
+     */
     protected function getListMapping(array $result): Entity
     {
     

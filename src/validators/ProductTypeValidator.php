@@ -7,13 +7,18 @@ use App\Utils\Consts;
 class ProductTypeValidator extends Validator
 {
 
+    /**
+     * Passes the dependency to the Validator
+     *
+     * @param ProductTypeRepository $repository
+     */
     public function __construct(ProductTypeRepository $repository)
     {
         parent::__construct($repository);
     }
 
     /**
-     * Validate input data
+     * Validates input data
      *
      * @param array $params
      * @param integer $id
@@ -38,7 +43,7 @@ class ProductTypeValidator extends Validator
     }
 
     /**
-     * Validate the product type before delete
+     * Validates the product type before delete
      *
      * @param integer $id
      * @return array

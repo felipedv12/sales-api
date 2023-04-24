@@ -18,7 +18,9 @@ abstract class Repository
     protected mixed $data;
     protected ?int $code;
 
-
+    /**
+     * Creates the object for the database connection
+     */
     public function __construct()
     {
         $driver = Database::DB_DRIVER;
@@ -32,6 +34,12 @@ abstract class Repository
         $this->connect($connectionString);
     }
 
+    /**
+     * Connect with the database
+     *
+     * @param string $connectionString
+     * @return void
+     */
     private function connect(string $connectionString)
     {
         try {

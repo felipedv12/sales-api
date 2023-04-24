@@ -5,11 +5,23 @@ use App\Repositories\ProductRepository;
 
 class ProductValidator extends Validator
 {
+    /**
+     * Passes the dependency to the Validator
+     *
+     * @param ProductRepository $repository
+     */
     public function __construct(ProductRepository $repository)
     {
         parent::__construct($repository);
     }
 
+    /**
+     * Validates input data
+     *
+     * @param array $params
+     * @param integer $id
+     * @return array
+     */
     public function validate(array $params, int $id): array
     {
         $this->initializeValidationProperties();
@@ -40,6 +52,12 @@ class ProductValidator extends Validator
         return $this->getValidationResults($params);
     }
 
+    /**
+     * Validates the product before delete
+     *
+     * @param integer $id
+     * @return array
+     */
     public function validateDelete(int $id) : array
     {
         $this->initializeValidationProperties();

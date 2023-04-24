@@ -26,6 +26,11 @@ abstract class Service
      */
     abstract protected function getValidatorClass(): string;
 
+    /**
+     * Returns the DTO entity in the implemented method
+     *
+     * @return string
+     */
     abstract protected function getDTOClass(): string;
 
     /**
@@ -122,6 +127,12 @@ abstract class Service
         return $deleted;
     }
 
+    /**
+     * Dispatches de delete data for validation
+     *
+     * @param integer $id
+     * @return array
+     */
     public function validateDelete(int $id): array
     {
         $validation = $this->getValidator()->validateDelete($id);

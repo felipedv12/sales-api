@@ -7,14 +7,18 @@ use App\Utils\Consts;
 
 class SaleValidator extends Validator
 {
-
+    /**
+     * Passes the dependency to the Validator
+     *
+     * @param SaleRepository $repository
+     */
     public function __construct(SaleRepository $repository)
     {
         parent::__construct($repository);
     }
 
     /**
-     * Validate input data
+     * Validates input data
      *
      * @param array $params
      * @param integer $id
@@ -38,7 +42,7 @@ class SaleValidator extends Validator
     }
 
     /**
-     * Validate the product type before delete
+     * Validates the sale before delete
      *
      * @param integer $id
      * @return array
